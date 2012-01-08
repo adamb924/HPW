@@ -1,0 +1,23 @@
+select * from soundchanges;
+select * from soundchange_reconstruction;
+
+
+select * from soundchanges; select * from soundchange_cognate;
+
+
+select * from projects;
+select * from approaches;
+select * from lemmas;
+select * from languages;
+select * from protoforms;
+select * from items;
+select * from cognate_sets;
+select * from correspondence_sets;
+select * from correspondence_set_elements;
+select * from reconstructions;
+select * from cognate_set_elements;
+select * from cognate_correspondence;
+select * from correspondence_reconstruction;
+select * from cookies;
+select * from soundchanges;
+select * from soundchange_cognate;

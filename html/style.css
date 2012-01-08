@@ -1,0 +1,273 @@
+body {
+	font-size: 10pt;
+	font-family: Tahoma;
+}
+
+a {
+	color: blue;
+	text-decoration: none;
+}
+a:visited {
+	color: auto;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+textarea {
+	font-size: 10pt;
+	font-family: Tahoma;
+}
+
+h1 {
+	font-size: 14pt;
+}
+
+h2 {
+	font-size: 12pt;
+}
+
+h3 {
+	font-size: 10pt;
+}
+
+h4 {
+	font-size: 10pt;
+	margin-top: 0.75em;
+	margin-bottom: 0.5em;
+}
+
+.tiny {
+	font-size: 80%;
+}
+
+.plaincursor {
+	cursor: default;
+}
+
+.opened {
+	display: table-row;
+}
+.closed {
+	display: none;
+}
+
+
+input.protoform {
+	width: 50px;
+}
+
+input.singlesegmentinput {
+	width: 25px;
+}
+
+table.data_table td {
+	white-space: nowrap;
+}
+
+table.data_table td.gloss {
+	white-space: nowrap;
+	font-style: italic;
+	background-color: transparent;
+}
+
+table.data_table tr td.button, table.data_table tr.selected td.button, table.data_table tr.highlighted td.button, table.data_table tr.highlighted_selected td.button {
+	background-color:  #EFEFEF;
+	background-color:  #BCFFCE;
+	white-space: nowrap;
+	padding: 0px;
+	padding-left: 4px;
+	padding-right: 4px;
+}
+
+table.data_table tr td.dropdownbutton, table.data_table tr.selected td.dropdownbutton, table.data_table tr.highlighted td.dropdownbutton, table.data_table tr.highlighted_selected td.dropdownbutton {
+	background-color:  #DEFF98;
+}
+
+table.data_table tr td.crossreferencebutton, table.data_table tr.selected td.crossreferencebutton, table.data_table tr.highlighted td.crossreferencebutton, table.data_table tr.highlighted_selected td.crossreferencebutton {
+	background-color:  #F1CB71;
+}
+
+table.data_table td.colutility {
+	background-color: #fff;
+}
+
+table.data_table td.colutility a {
+	color: #666;
+	font-size: 80%;
+}
+
+table.data_table td.protoform {
+	color: #666;
+}
+
+table.data_table td a {
+	text-decoration: none;
+}
+
+table.data_table td a:hover {
+	text-decoration: underline;
+}
+
+table.data_table td img {
+	border: 0px;
+}
+
+table.data_table td {
+	background-color:  #eef3fa;
+}
+
+table.data_table tr.utility td {
+	background-color:  #EFEFEF;
+}
+
+table.data_table th.header {
+	background-color:  #A9DA92;
+}
+
+table.data_table th {
+	padding-left: 0.3em;
+	padding-right: 0.3em;
+}
+
+table.data_table tr.selected td {
+	background-color: #A9DA92;
+}
+
+table.data_table tr.highlighted_selected td {
+	background-color: #c6f4a3;
+}
+
+
+table.data_table td.selected {
+	background-color: #A9DA92;
+}
+
+
+table.data_table tr.highlighted td {
+	background-color: #FFFFCC;
+}
+
+ul.toc {
+	padding-left: 0em;
+}
+ul.toc li ul {
+	padding-left: 15px;
+}
+ul.toc li ul li {
+	font-size: 80%;
+}
+ul.toc li {
+	list-style: none;
+	margin-bottom: 3px;
+}
+ul.toc li a {
+	text-decoration: none;
+	color: black;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+
+tr.corr_row {
+	display: none;
+}
+
+table.data_table tr.corr_row td {
+	background-color: rgb(245,245,245);
+}
+
+table.lineage {
+	border: 1px black solid;
+}
+
+div#frameheader {
+	background-color: darkblue;
+}
+div#frameheader h1 {
+	font-weight: bold;
+	font-size: 11pt;
+	margin: 0px;
+	color: white;
+	padding-left: 5px;
+	padding-bottom: 2px;
+}
+div.hide {
+	color: white;
+	float: right;
+}
+div.hide a {
+	text-decoration: none;
+	color: white;
+}
+#body {
+	padding: 10px
+}
+
+a.highlight {
+	font-weight: bold;
+}
+
+input.filltd {
+	width: 65px;
+}
+
+span.topic {
+	color: #00f;
+}
+
+.panel {
+	border: thin solid darkblue;
+	padding: 2px;
+	margin-top: -2px;
+}
+
+table.panelbuttons {
+	border: thin solid darkblue;
+	border-bottom: 0px;
+	padding: 0px;
+	margin: 0px;
+	cell-spacing: 0px;
+}
+
+table.panelbuttons tbody {
+	padding: 0px;
+	margin: 0px;
+}
+
+table.panelbuttons tr {
+	padding: 0px;
+	margin: 0px;
+}
+
+table.panelbuttons td {
+	float: left;
+	border-left: thin solid darkblue;
+	margin: 0px;
+	padding: 3px;
+	padding-left: 6px;
+	padding-right: 6px;
+}
+
+table.panelbuttons td.first {
+	border-left: none;
+}
+
+div.panelbuttoncontainer {
+	height: 25px;
+}
+a.panelbuttons {
+	display: block;
+	float: left;
+	padding: 3px;
+	padding-left: 6px;
+	padding-right: 6px;
+	padding-bottom: 4px;
+	border: thin solid darkblue;
+	border-bottom: 0px;
+	border-left: 0px;
+}
+a.panelbuttons.first {
+	border-left: thin solid darkblue;
+}

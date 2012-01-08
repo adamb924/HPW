@@ -1,0 +1,225 @@
+<!DOCTYPE html PUBLIC &ldquo;-//W3C//DTD XHTML 1.0 Strict//EN"
+  &ldquo;http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+<body>
+<h1>Historical Phonology Workplace</h1>
+
+<p>Welcome to <em>Historical Phonology Workplace</em>. This is an analysis tool for analyzing historical phonology data. The motivation for such a tool is two-fold. First, it is an implementation of a database structure for recording analytical decisions made in the course of doing historical phonology. Second, it is a workspace that makes many of the tasks of historical phonological analysis easier. You can expect this program to:</p>
+
+<ul>
+<li>Store your data.</li>
+<li>Keep track of cognate sets, correspondence sets, reconstructed segments, and reconstructed protoforms, <em>and the interrelations between these levels</em>&mdash;for multiple approaches to a given dataset.</li>
+<li>Produce some simple reports about your reconstructions.</li>
+</ul>
+
+<p>Conversely, it will not:</p>
+<ul>
+<li>Perform analysis on its own.</li>
+<li>Notice whether your analysis is correct or not.</li>
+<li>Perform string comparisons, lexicostatistical computations, glottochronological computations, etc.</li>
+</ul>
+
+<p>The overarching goal is to enable a researcher to produce an analysis, along with a database to describe the analysis. It's one thing to say that *t existed in Proto Indo-European, but another to say that *t existed, is attested by so many correspondence sets, so many cognate sets, and so many words from so many languages, etc., and then to provide the data for everyone to see.</p>
+
+<p>The design idea behind <em>Historical Phonology Workplace</em> is to force no more structure on your analysis than the logic of historical reconstruction requires. For instance, you are required to identify cognate sets before you can create a correspondence set. But you aren't limited, say, to reconstructing only single segments. Your correspondence sets can be long strings (say, for analyzing the development of consonant clusters).</p>
+
+<h2>Fundamental concepts</h2>
+<p><em>Historical Phonology Workplace</em> should prove fairly straightforward to people familiar with historical phonological analysis. The concepts employed are not complex: one has a dataset (wordlists from putatively related languages), and one can have several approaches (theories, hypotheses) for the historical analysis of that language. In <em>Historical Phonology Workplace</em>, this is the distinction between <em>projects</em> and <em>approaches</em>.</p>
+
+<ul>
+<li>The <em>project</em> contains the data, and all approaches to the data</li>
+<li>An <em>approach</em> contains an analysis.</li>
+</ul>
+
+<p>What are the data? A set of lexicons. In <em>Historical Phonology Workplace</em> a datum is a string of phonetic segments and a lemma. The lemma is any label&mdash;you can make it a simple word (&lsquo;apple&rsquo;), indicate an inflectional form (&lsquo;apple gen.&rsquo;), or write in some notation to represent an affix (&lsquo;SUPERLATIVE&rsquo;). The phonetic segment can be any Unicode string, which ought to include just about everything.</p>
+
+<p>What is included in an approach? <em>Historical Phonology Workplace</em> is based on the analytical abstractions that are employed in historical phonological analysis.</p>
+
+<ul>
+<li>Creating cognate sets</li>
+<li>Creating correspondence sets</li>
+<li>Creating reconstructed segments</li>
+</ul>
+
+<p>More important are the links between these two levels. <em>Historical Phonology Workplace</em> will remember, not just that a cognate set exists, but from which data it as composed. It doesn't just keep track of correspondences, but also what cognate sets illustrate those correspondences. It doesn't just keep track of reconstructions, but also of what correspondence relations and what cognate sets those reconstructions are based upon.</p>
+
+<h2>This guide</h2>
+<p>This guide occupies sort of middle ground between a &ldquo;getting started&rdquo; manual and a &ldquo;reference manual.&rdquo; While there are a few sequential procedures to introduce, <em>Historical Phonology Workplace</em> largely reflects the non-linear nature of phonological analysis: always jumping between levels of abstraction. It therefore doesn't make sense to have a lot of sequential instruction in a manual.</p>
+<p>That said, the guide sort of assumes a loose sequential order for you to explore the interface. From there, feel free to explore. To make it easier to browse through, <span class="topic">some key phrases have been highlighted</span>.</p>
+
+<p>In the initial installation of <em>Historical Phonology Workplace</em> there is an example project and two example approaches, for a non-sensical data set. You can use these to understand the features of the software, and to understand what a final product might look like.</p>
+
+<h2>First steps</h2>
+<p>When <em>Historical Phonology Workplace</em> is first loaded, there is no default project or approach. To select <span class="topic">a project and approach</span>, click on &ldquo;Change project/approach&rdquo; from the left menu. From the &ldquo;Project&rdquo; drop-down, select &ldquo;K'iche&rdquo; and from &ldquo;Approach&rdquo;  select &ldquo;Take 1.&rdquo;</p>
+<p>Most of the work in <em>Historical Phonology Workplace</em> takes place in the Workplace view. To <span class="topic">see the workspace</span>, click on &ldquo;Workspace&rdquo; on the left menu.</p>
+<p>Initially, the Workplace shows four windows: Data, Cognate Sets, Correspondences, and Reconstructions. These represent four levels of abstraction in historical phonology. Every window depends on the window above it.</p>
+<p>Each window contains a table of data, along with various buttons for performing the analysis. Take a look at teach table. The Data window simply contains a data table, showing the data as they have been entered. The Cognate Sets window looks much the same: in this case, all of the data have been entered as cognate sets, so this level looks redundant; in other analyses, however, cognate sets may involve words from non-identical lemmas. The Correspondences window has a table of correspondence sets. Finally, the Reconstruction window has a table with reconstructed forms in proto-languages.</p>
+<p>At the top of most columns of these tables, there is a &ldquo;Sort&rdquo; button. You may click on this button to <span class="topic">sort the rows of the table</span> by the values in that column.</p>
+
+<h3>Viewing cross-references</h3>
+<p>In the Cognate Sets, Correspondences, and Reconstruction window, there are orange buttons on each row that allow you to <span class="topic">view links between the various levels of analysis</span>.</p>
+<p>From the Cognate Sets window, click on the orange &ldquo;Data&rdquo; button for one of the rows. Immediately, the <span class="topic">source data for the cognate set are highlighted</span> in the Data window.</p>
+<p>Four windows is a bit much, and we will not be looking at the Data window for a while yet. On the titlebar for the &ldquo;Data&rdquo; window, click the &ldquo;hide&rdquo; button. The Data window is no longer shown, leaving more room the the remaining three windows. (If you accidentally hide more windows than that, see the section entitled &ldquo;Controlling the appearance of the Workspace&rdquo; below.)</p>
+<p>Now again from the Cognate Sets window, look for the orange button that reads &ldquo;Corr (X)&rdquo;&mdash;where X is some number. &ldquo;Corr&rdquo; here stands for &ldquo;Correspondence.&rdquo; When you click this button, <span class="topic">all of the correspondence sets associated with this cognate set will be highlighted</span> in the Correspondences window. The number in parentheses in the button indicates how many correspondence sets are associated with the cognate set.</p>
+<p>Finally in the Cognate Sets window, the orange &ldquo;Recon&rdquo; (=Reconstructions) button will <span class="topic">show all of the reconstructions associated with the cognate set</span> in the Reconstructions window. It will also highlight the correspondences in the Correspondences window.</p>
+<p>Things work similarly in the Correspondences window. Clicking the orange &ldquo;Cog&rdquo; button will <span class="topic">highlight all of the cognate sets associated with the reconstruction</span>. Clicking the orange &ldquo;Recon&rdquo; button will highlight associated reconstructions.</p>
+<p>And again, the Reconstruction window works the same way. Click the orange &ldquo;Cor&rdquo; button to <span class="topic">view all of the correspondences associated with a particular reconstruction</span>, or the orange &ldquo;Cog&rdquo; button to <span class="topic">view all of the associated correspondence sets and cognate sets</span>.</p>
+
+<h3>Controlling the appearance of the Workspace</h3>
+<p>The appearance of the Workspace can be modified. From the left menu, click on &ldquo;Display Settings.&rdquo; The &ldquo;Workplace Display Settings&rdquo; screen is brought up.</p>
+<p>Under the &ldquo;Select which windows are visible&rdquo; header, <span class="topic">select with checkboxes the windows you wish to be visible</span>.</p>
+<p>Under &ldquo;Display abbreviations...&rdquo; you can opt to <span class="topic">display abbreviated language names</span> rather than full ones; this can save on screen space.</p>
+<p>The &ldquo;Visibility of languages&rdquo; section allows you <span class="topic">choose which languages (=columns of the table) should be displayed</span>.</p>
+<p>Finally under &ldquo;Order of Languages&rdquo; you can <span class="topic">change the display order of the columns</span> by selecting a language, and using the &ldquo;Move Up&rdquo; and &ldquo;Move Down&rdquo; buttons to change its position in the list. The topmost item in the list is the leftmost in the table.</p>
+<p>Upon returning to the Workspace, changes in the display settings are reflected in the appearance of the tables.</p>
+<p>
+You can also <span class="topic">associate colors with languages</span>, so that the columns in the Workspace are colored rather than being gray. From the left menu, choose &ldquo;Languages.&rdquo; You can enter in a color into the &ldquo;Color&rdquo; field. After you click the &ldquo;Make Changes&rdquo; button, you can see the result in the Workspace. What is an acceptable thing to put in that box? Anything that is an acceptable CSS color. These are things that look like
+</p>
+<ul>
+<li>rgb(255,235,235)</li>
+<li>#ffffee</li>
+<li>lightgreen</li>
+</ul>
+<p>A suggestion: use pastels, and indicate subgroups with colors of the same hue.</p>
+<h2>Making changes</h2>
+<p>This section will introduce basic steps in analysis.</p>
+
+<h3>Making, modifying, and deleting cognate sets</h3>
+<p>Change the display settings of the workspace so that only the Data and Cognate Set windows are showing.</p>
+<p>Our goal is to <span class="topic">create a new cognate set</span>. To create a set, we highlight the words we want to include in the set. In the Data window, click on a word: it changes color to indicate that it has been selected. Click it again to deselect it. You can also clear the selection from a column by clicking the gray &ldquo;clear&rdquo; button at the top of the column. You can select multiple words from the same language for a cognate set, if you believe that they are cognate (say, in the sense of internal reconstruction).</p>
+<p>Once you have selected all of the words you want to include in the cognate set, scroll down to the bottom of the Data window to find the &ldquo;Create a cognate set&rdquo; form. You need to enter in a name for the set (i.e., some reconstructed meaning), and you can include a note about the cognate set if you wish. When you click the &ldquo;Create&rdquo; button a new cognate set appears in the Cognate Sets window (possibly far down the page, depending on how the table is sorted).</p>
+<p>In cases where all of the words you want to put into the cognate set are from the same lemma (=row), then you can simply click the blue &ldquo;Q.C.S.&rdquo; (=Quick Cognate Set) button. This will <span class="topic">create a cognate set with all the words from the same row</span> with the lemma label as the name of the set.</p>
+<p><span class="topic">Altering a cognate set</span>. First, change the selections in the Data window to reflect the elements of the new set. Then in the Cognate Sets window click the blue &ldquo;alter&rdquo; button to change that cognate set to reflect the new selection.</p>
+<p>To <span class="topic">delete a cognate set</span>, in the Cognate Sets window, click the blue &ldquo;X&rdquo; button. The program will confirm your decision, and then delete the set.</p>
+<p>To <span class="topic">make a note about a cognate set</span>, click on the green &ldquo;Note&rdquo; button. A small form appears with space for a note and a &ldquo;save&rdquo; button to save the note.</p>
+<p>The green &ldquo;Proto&rdquo; button is discussed below.</p>
+
+<h3>Making, modifying, and deleting correspondence sets</h3>
+<p>Change the display settings of the workspace so that only the Cognate Set and Correspondences windows are showing.</p>
+<p>To <span class="topic">create a correspondence set from a cognate set</span>, in the Cognate Set window click on the green &ldquo;Corr&rdquo; (=Correspondence) button of cognate set from which you wish to make a correspondence. A small form appears beneath the row. You can enter corresponding segments (or strings of segments&mdash;it makes no difference to the program) into the text box in each column. Then click &ldquo;Create&rdquo; to add the correspondence. The new correspondence appears in the Correspondences window.</p>
+<p>As a convenience, the above form has a &ldquo;copy from first&rdquo; button that will copy the value from the leftmost text box to the remaining text boxes&mdash;which saves time when all the elements of the correspondence set are identical. There is also a &ldquo;clear&rdquo; button to clear all values from the box.</p>
+<p>You can <span class="topic">associate a cognate set with a correspondence set</span>. Select a correspondence in the Correspondence window by clicking the checkbox to the left (the row changes color to indicate your selection). Then back in the Cognate Sets window click the &ldquo;associate this set with the selected correspondence set&rdquo; for the appropriate cognate set (using the green &ldquo;Corr&rdquo; button).</p>
+<p>Conversely, you can <span class="topic">disassociate a cognate set from a correspondence set</span>. To do this, select the cognate set in the Cognate Sets window (with the checkbox at the left of each row), and in the Correspondences window click the blue &ldquo;Rm Sel Cog&rdquo; (=Remove Selected Cognate Set) button.</p>
+<p>To <span class="topic">edit a correspondence set</span>, in the Correspondences window click the green &ldquo;Edit&rdquo; button. A form appears from which you can change anything about the correspondence set, and then click &ldquo;Save.&rdquo;</p>
+<p>To <span class="topic">delete a correspondence set</span>, in the Correspondences window, click the blue &ldquo;X&rdquo; button. The program will confirm your decision, and then delete the set.</p>
+<p>To <span class="topic">make a note about a correspondence set</span>, click on the green &ldquo;Note&rdquo; button. A small form appears with space for a note and a &ldquo;save&rdquo; button to save the note.</p>
+
+<h3>Making, modifying, and deleting reconstructions</h3>
+<p>Change the display settings of the workspace so that only the Correspondence Set and Reconstruction windows are showing. Within the Reconstruction window, check that the &ldquo;Reconstructions&rdquo; tab is active (default).</p>
+<p>To <span class="topic">reconstruct a segment from a correspondence set</span>, in the Correspondences window click the blue  &ldquo;Recon&rdquo; (=Reconstruction) button, which will reveal a small form. You can enter in a reconstructed segment (or string of segments), select the proto-language you wish to reconstruct in, and click  &ldquo;Add Reconstruction.&rdquo; The new reconstruction appears in the Reconstruction window.</p>
+<p>Or, you can <span class="topic">associate a correspondence set with a reconstruction</span> that has already been created. After clicking the green  &ldquo;Recon&rdquo; button in the Correspondences window, select a reconstruction in the Reconstruction window by clicking the checkbox at the left end of the row. Then back in the Correspondences window click the  &ldquo;associate this set with the selected reconstruction&rdquo; link.</p>
+<p>Conversely, to <span class="topic">disassociate a correspondence set from a reconstruction</span>, select that correspondence set in the Correspondences window (by clicking the checkbox at the left end of the row). Then click  &ldquo;Rm Sel Corr&rdquo; (=Remove Selected Correspondence) on the row of the reconstruction in the Reconstruction window.</p>
+<p>To <span class="topic">modify a reconstruction you have already made</span>, in the Reconstruction window click the green &ldquo;Edit&rdquo; button, which will reveal a small form. You can edit the reconstructed segment (or string of segments), and then click &ldquo;Save&rdquo; to save the change.</p>
+
+<p>To <span class="topic">delete a reconstruction</span>, in the Reconstruction window, click the blue &ldquo;X&rdquo; button. The program will confirm your decision, and then delete the set.</p>
+<p>To <span class="topic">make a note about a reconstruction</span>, click on the green &ldquo;Note&rdquo; button. A small form appears with space for a note and a &ldquo;save&rdquo; button to save the note.</p>
+<p>For each reconstruction you can see a <span class="topic">quick summary of the amount of data that went into each reconstruction</span>.</p>
+<ul>
+<li># Corr &mdash; the number of correspondence sets associated with the reconstruction</li>
+<li># Cog &mdash; the number of cognate sets associated with the reconstruction</li>
+<li># Data &mdash; the number of data (=words or morphemes) associated with the reconstruction</li>
+<li># Lang &mdash; the number of languages associated with the reconstruction</li>
+</ul>
+
+<h3>Reconstructing whole words</h3>
+<p>You can <span class="topic">reconstruct whole words</span> in the proto-language that you have posited. From the Cognate Sets window, click the green &ldquo;Proto&rdquo; button. A form appears. Beneath each reconstructed language there is a space to write in a proto-form, and a &ldquo;save&rdquo; button to save the form.</p>
+<p><em>Historical Phonology Workplace</em> doesn't constrain what you write in this box, at all.</p>
+<p>Why is the place for entering a reconstructed word in the Cognate Sets window? Because:</p>
+<ol>
+<li>Reconstructed words are associated in a one-to-one way with cognates.</li>
+<li>When determining the reconstructed form it is helpful to have the Correspondences and Reconstructions windows free, so you can see what you're doing.
+<li>It fit nicely there.</li>
+</ol>
+
+<h3>Making, modifying, and deleting sound changes</h3>
+<p>Change the display settings of the workspace so that only the Correspondence Set and Reconstruction windows are showing. Within the Reconstruction window, check that the &ldquo;Sound Changes&rdquo; tab is active (default).</p>
+<p>To <span class="topic">create a sound change</span>, in the Correspondences window click the green &ldquo;Change&rdquo; button to fill out the form. Select a proto-segment from the drop-down box, and fill in the rest of the rule as if it were an <em>SPE</em>-style phonological rule. (<em>Note: positing a sound change presupposes that you have posited a reconstructed segment. If you haven't, then instead of a form you will see a message telling you to do so.</em>) Select the language for which the rule applies. If you wish, you can specify that this rule occurs after another rule that you have already created. Click &ldquo;Save&rdquo; to save the change.</p>
+<p>To <span class="topic">associate a cognate set (=protoform) with a sound change</span> that has already been created, select a cognate set in the Cognate Set window by clicking the checkbox at the left end of the row. Then back in the Reconstructions window (Sound Changes tab), click the  &ldquo;Associate&rdquo; link.</p>
+<p>Conversely, to <span class="topic">disassociate a cognate set (=protoform) from a sound change</span>, select that cognate set in the Cognate Set window (by clicking the checkbox at the left end of the row). Then click  &ldquo;Disassociate&rdquo; on the row of the sound change in the Sound Changes window.</p>
+<p>To <span class="topic">modify a sound change you have already made</span>, in the Reconstruction window (Sound Changes tab) click the green &ldquo;Edit&rdquo; button, which will reveal a small form. You can edit the sound change, and then click &ldquo;Save&rdquo; to save the change.</p>
+<p>To <span class="topic">delete a sound change</span>, in the Reconstruction window (Sound Changes tab), click the blue &ldquo;X&rdquo; button. The program will confirm your decision, and then delete the sound change.</p>
+<p>To <span class="topic">make a note about a sound change</span>, click on the green &ldquo;Note&rdquo; button. A small form appears with space for a note and a &ldquo;save&rdquo; button to save the note.</p>
+
+
+<h2>General interface tips</h2>
+
+<ul>
+<li>If you let your mouse hover over a link, a tooltip will appear with an explanation of the function.</li>
+<li>Orange buttons are for cross-references</li>
+<li>If clicking a button expands a form, clicking it again will collapse that form.</li>
+<li>It usually makes sense to have one or two windows visible, such as:
+	<ul>
+	<li>Data &amp; Cognate Sets</li>
+	<li>Cognate Sets &amp; Correspondences</li>
+	<li>Correspondences &amp; Reconstructions</li>
+	</ul>
+</ul>
+
+<h2>Step-by-step for creating a new project</h2>
+<ol>
+<li>From the left menu click  &ldquo;Manage... Projects&rdquo;</li>
+<li>Under  &ldquo;Add a project&rdquo; enter a name and description, the latter being optional.</li>
+<li>From the left menu click  &ldquo;Manage... Approaches&rdquo;</li>
+<li>Add an approach, entering the name and description (optional), and selecting the appropriate project from the drop-down.</li>
+<li>Currently the only way to import data is through a CSV file. (See the section  &ldquo;CSV File Format&rdquo; below.) From the left menu click  &ldquo;Import CSV Data.&rdquo;</li>
+<li>Upload your file; if no error messages appear everything is fine.</li>
+<li>From the left menu click  &ldquo;Change project/approach&rdquo;</li>
+<li>Select your project and approach and click  &ldquo;Change.&rdquo;</li>
+<li>Optionally...
+	<ul>
+		<li>From the left menu click  &ldquo;Display Settings&rdquo; to customize how your workspace is displayed.</li>
+		<li>From the left menu click  &ldquo;Languages&rdquo; to edit the details of your languages&mdash;such as adding an abbreviated name.</li>
+	</ul>
+</li>
+<li>Click  &ldquo;Workspace&rdquo; to begin work.</li>
+</ol>
+
+<h2>Other features</h2>
+<p>If you are want to create an additional approach for a project, it may be that you want to copy elements of an existing approach. You can <span class="topic">create a new approach based on an existing approach</span> by going to  &ldquo;Manage... Approaches&rdquo; and filling out for the form under  &ldquo;Create new approach based on an existing approach.&rdquo;</p>
+
+<h2>Export and backup</h2>
+<p>You can export your data and analysis in XML format. From the left menu choose &ldquo;Export XML Data&rdquo; and then fill out the form. If you are at a loss for the options, I suggest exporting both strings and indices.</p>
+<p>You can backup your data by backing up the &ldquo;database.db&rdquo; file, which is a standalone database file containing everything. See &ldquo;Under the hood&rdquo; below.</p>
+
+<h2>CSV File Format</h2>
+<p>At this point, <em>Historical Phonology Workplace</em> only supports entering data by importing a CSV file. CSV-format files can be generated manually, or by any spreadsheet program (Microsoft Excel, OpenOffice Calc). The requirements are these:</p>
+
+<ul>
+<li>The text delimiter is  " (quotation mark).</li>
+<li>The field delimiter is , (comma).</li>
+<li>The text is encoded in UTF-8&mdash;or, equivalently, in ASCII.</li>
+<li>The first column contains the glosses.</li>
+<li>The first row contains the language names, except the first column, which is entitled  &ldquo;Gloss&rdquo; (no quotes).</li>
+</ul>
+
+<p>Here is a sample data table, including data for the Balaqa and Bakala languages:</p>
+
+<table border="1">
+<tr><td>Gloss</td><td>Balaqa</td><td>Bakala</td></tr>
+<tr><td>beautiful</td><td>uga</td><td>uka</td></tr>
+<tr><td>blood</td><td>buga</td><td>buka</td></tr>
+<tr><td>bread</td><td>me</td><td>mi</td></tr>
+<tr><td>bring</td><td>tarzan</td><td>tarsan</td></tr>
+</table>
+
+<p>The appropriate corresponding CSV file is:</p>
+
+<pre>
+"Gloss","Balaqa","Bakala"
+"beautiful","uga","uka"
+"blood","buga","buka"
+"bread","me","mi"
+"bring","tarzan","tarsan"
+</pre>
+
+<h2>Under the hood</h2>
+<p>This is a short section describing some technical aspects of <em>Historical Phonology Workplace</em>, which are not of interest to the general user.</p>
+<p><em>Historical Phonology Workplace</em> started off as a web-based program, which is why it feels like a web page. It was a blend of PHP and JavaScript. Just about as it was finished, I realized what a dumb system that was: working with it over the Internet was very slow, and the alterative of having users install a server on their machine seemed a bit excessive. So, I decided to make it a standalone program instead. I used Qt's QtWebKit module to create a browser that displays a single local web site. This involved ditching PHP and moving the database logic to Qt. (Although it wasn't great to have to rewrite the code, I actually found the Qt APIs for SQL and XML easier to work with than the PHP ones).)</p>
+<p>The database is a SQLite (sqlite3) database. All of the project and approach data reside in the single &ldquo;database.db&rdquo; file in the application directory. This is just a standalone SQL database, which you could explore with the SQLite command line utility. You can back up this file (if you use webmail, email it to yourself) and restore it by copying it back in to the application directory. If something really goes wrong, a clever geek should be able to recover your information, given the &ldquo;database.db&rdquo; file alone.</p>
+</body>
+</html>

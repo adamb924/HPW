@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<link rel="stylesheet" type="text/css" href="style.css" />
+<script type="text/javascript">
+function go()
+{
+	if(top.projects.length==0)
+	{
+		giveUp("There are currently no projects in the database. Add a project, and then an approach, to begin work. (From the left menu, 'Manage... Projects')");
+		return;
+	}
+	else
+	{
+		populateProjects();
+		if(top.approaches.length==0)
+		{
+			giveUp("There are currently no approaches in the database. Add an approach to begin work. (From the left menu, 'Manage... Approaches')");
+			return;
+		}
+		else
+		{
+			populateApproaches();
+		}
+	}
+
+}
+
+function populateProjects()
+{
+	projectBox = document.getElementById("project");
+	while (projectBox.childNodes.length > 0)
+	{
+        projectBox.removeChild(projectBox.firstChild);
+	}
+	ct = 0;
+	for(i=0; i<top.projects.length; i++)
+	{
+		opt = document.createElement("option");
+		opt.value = top.projects[i].id;
+		opt.innerHTML = top.projects[i].name;
+		projectBox.appendChild(opt);
+		if(top.project==top.projects[i].id)
+		{
+			projectBox.selectedIndex = ct;
+		}
+		ct++;
+	}
+}
+function populateApproaches()
+{
+	projectID = document.getElementById("project").value;
+	approachBox = document.getElementById("approach");
+	while (approachBox.childNodes.length > 0)
+	{
+	        approachBox.removeChild(approachBox.firstChild);
+	}
+	ct = 0;
+	for(i=0; i<top.approaches.length; i++)
+	{
+		if(top.approaches[i].project == projectID)
+		{
+			opt = document.createElement("option");
+			opt.value = top.approaches[i].id;
+			opt.innerHTML = top.approaches[i].name;
+			approachBox.appendChild(opt);
+
+			if(top.approach==top.approaches[i].id)
+			{
+				approachBox.selectedIndex = ct;
+			}
+			ct++;
+		}
+	}
+}
+
+function giveUp(msg)
+{
+	document.getElementById("projappr").innerHTML = "<p><em>"+msg+"</em></p>";
+}
+
+function change()
+{
+	if(document.getElementById("approach").value == '')
+	{
+		alert("Before being able to select a project, you need to have at least one approach defined. Go to 'Manage... Approaches' in the left menu.");
+	}
+	else
+	{
+		top.project = document.getElementById("project").value;
+		top.approach = document.getElementById("approach").value;
+
+		var exdate=new Date();
+		exdate.setDate(exdate.getDate()+10);
+//		document.cookie = 'histling_project='+top.project+';'+exdate.toGMTString();
+//		document.cookie = 'histling_approach='+top.approach+';'+exdate.toGMTString();
+		top.app.setCookie('histling_project',top.project);
+		top.app.setCookie('histling_approach',top.approach);
+		
+		top.app.setProjectApproach(top.project,top.approach);
+		top.defaultDisplaySettings();
+
+		top.changeHeader();
+	}
+}
+</script>
+</head>
+<body onload="go();">
+
+<div id="projappr">
+<form method="get" action="projectapproach.html">
+	<label for="project">Project</label><select id="project" name="project" onchange="populateApproaches();"></select><br/>
+	<label for="approach">Approach</label><select id="approach" name="approach"></select><br/>
+	<input type="button" value="Change" onclick="change();"/>
+</form>
+</div>
+</body>
+</html>

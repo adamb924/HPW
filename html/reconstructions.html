@@ -1,0 +1,342 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<link rel="stylesheet" type="text/css" href="style.css" />
+<link rel="stylesheet" type="text/css" href="narrow.css" />
+<script type="text/javascript">
+function editReconstruction(row)
+{
+	if( top.app.editReconstruction(row,document.getElementById('editfield'+row).value) || true)
+	{
+		top.drawReconstructionTable();
+	}
+}
+
+function toggleEditForm(row)
+{
+	if(top.reconstructionEditOpen[row]==0||top.reconstructionNoteOpen[row]==null)
+	{
+		top.reconstructionEditOpen[row] = 1;
+		document.getElementById("editrow"+row).style.display = 'table-row';
+		document.getElementById("editlink"+row).innerHTML = top.strShowEditAfter;
+	}
+	else
+	{
+		top.reconstructionEditOpen[row] = 0;
+		document.getElementById("editrow"+row).style.display = 'none';
+		document.getElementById("editlink"+row).innerHTML = top.strShowEditBefore;
+	}
+}
+
+function toggleSCEditForm(row)
+{
+	if(top.soundchangeEditOpen[row]==0||top.soundchangeEditOpen[row]==null)
+	{
+		top.soundchangeEditOpen[row] = 1;
+		document.getElementById("sceditrow"+row).style.display = 'table-row';
+		document.getElementById("scedit"+row).innerHTML = top.strShowEditAfter;
+	}
+	else
+	{
+		top.soundchangeEditOpen[row] = 0;
+		document.getElementById("sceditrow"+row).style.display = 'none';
+		document.getElementById("scedit"+row).innerHTML = top.strShowEditBefore;
+	}
+}
+
+function toggleSCNoteForm(row)
+{
+	if(top.soundchangeNoteOpen[row]==0||top.soundchangeNoteOpen[row]==null)
+	{
+		top.soundchangeNoteOpen[row] = 1;
+		document.getElementById("scnote"+row).style.display = 'table-row';
+		document.getElementById("scnlink"+row).innerHTML = top.strShowNoteAfter;
+	}
+	else
+	{
+		top.soundchangeNoteOpen[row] = 0;
+		document.getElementById("scnote"+row).style.display = 'none';
+		document.getElementById("scnlink"+row).innerHTML = top.strShowNoteBefore;
+	}
+}
+
+
+function toggleNoteForm(row)
+{
+	if(top.reconstructionNoteOpen[row]==0||top.reconstructionNoteOpen[row]==null)
+	{
+		top.reconstructionNoteOpen[row] = 1;
+		document.getElementById("note"+row).style.display = 'table-row';
+		document.getElementById("nlink"+row).innerHTML = top.strShowNoteAfter;
+	}
+	else
+	{
+		top.reconstructionNoteOpen[row] = 0;
+		document.getElementById("note"+row).style.display = 'none';
+		document.getElementById("nlink"+row).innerHTML = top.strShowNoteBefore;
+	}
+}
+
+function saveSCNote(row)
+{
+	top.app.saveSoundchangesNote(document.getElementById("scnotetext"+row).value,row);
+}
+
+function saveNote(row)
+{
+	top.app.saveReconstructionNote(document.getElementById("notetext"+row).value,row);
+}
+
+
+function removeReconstruction(row)
+{
+	if( confirm("Are you certain you want to remove this reconstruction? This action cannot be undone.") )
+	{
+		if(top.app.removeReconstruction(row)||true)
+		{
+			top.invalidateReconstructionSort = 1;
+			top.drawReconstructionTable();
+			top.drawCorrespondenceTable();
+		}
+	}
+}
+
+function rowselect(row)
+{
+	if(top.reconstructionFrameSelectedRow == row)
+	{
+		top.reconstructionFrameSelectedRow = null;
+	}
+	else
+	{
+		top.reconstructionFrameSelectedRow = row;
+	}
+	top.drawReconstructionTable();
+}
+
+function highlightCorrespondences(row)
+{
+	top.reconstructionFrameSelectedRow = row;
+	top.drawReconstructionTable();
+	top.highlightCorrespondences(row);
+}
+
+function highlightCorrespondencesCognates(row)
+{
+	top.reconstructionFrameSelectedRow = row;
+	top.drawReconstructionTable();
+	top.highlightCorrespondencesCognates(row);
+}
+
+function removeSelected(row)
+{
+	top.reconstructionFrameSelectedRow = row;
+	if(!top.showCorrespondences)
+	{
+		alert('The correspondence window is not showing.');
+		return;
+	}
+	else if(top.correspondenceFrameSelectedRow==null)
+	{
+		alert('No correspondence set seems to be selected.');
+		return;
+	}
+	if(!top.showReconstructions)
+	{
+		top.showReconstructions = 1;
+		top.refreshRightFrame();
+	}
+	if( top.app.disassociateCorrespondenceReconstruction(top.correspondenceFrameSelectedRow,row) || true)
+	{
+		top.correspondenceFrameHighlights = Array();
+		top.drawReconstructionTable();
+		top.drawCorrespondenceTable();
+	}
+}
+
+function showPanel(number)
+{
+	top.showReconstructionPanel = 1*number;
+	npanels = 3;
+	for(var i=0; i<npanels; i++)
+	{
+		if(i==top.showReconstructionPanel)
+		{
+			document.getElementById("panel"+i).style.display = 'block';
+			document.getElementById("panelbutton"+i).style.backgroundColor = 'rgb(255,255,255)';
+			document.getElementById("panelbutton"+i).style.borderBottom = '0px';
+		}
+		else
+		{
+			document.getElementById("panel"+i).style.display = 'none';
+			document.getElementById("panelbutton"+i).style.backgroundColor = 'rgb(245,245,245)';
+			document.getElementById("panelbutton"+i).style.borderBottom = 'thin solid darkblue';
+		}
+	}
+}
+
+function soundchangeEdit(row)
+{
+	if( top.app.alterSoundChange(row,document.getElementById("scedit_reconstruction"+row).value,document.getElementById("scedit_becomes"+row).value,document.getElementById("scedit_before"+row).value,document.getElementById("scedit_after"+row).value,document.getElementById("scedit_inlanguage"+row).value,document.getElementById("scedit_follows"+row).value) || true)
+	{
+		top.drawReconstructionTable();
+	}
+}
+
+function associateProtoform(id)
+{
+	if(!top.showCognates)
+	{
+		alert('The cognates window is not showing.');
+		return;
+	}
+	else if(top.cognateFrameSelectedRow==null)
+	{
+		alert('No cognate set/protoform seems to be selected.');
+		return;
+	}
+	if( top.app.associateSoundchangeCognate(id,top.cognateFrameSelectedRow) || true)
+	{
+		top.cognateFrameHighlights = Array();
+		top.drawReconstructionTable();
+		top.drawCognateSetTable();
+	}
+}
+
+function disassociateProtoform(id)
+{
+	if(!top.showCognates)
+	{
+		alert('The cognates window is not showing.');
+		return;
+	}
+	else if(top.cognateFrameSelectedRow==null)
+	{
+		alert('No cognate set/protoform seems to be selected.');
+		return;
+	}
+	if( top.app.disassociateSoundchangeCognate(id,top.cognateFrameSelectedRow) || true)
+	{
+		top.cognateFrameHighlights = Array();
+		top.drawReconstructionTable();
+		top.drawCognateSetTable();
+	}
+}
+
+function highlightProtoforms(id)
+{
+	if(!top.showCognates)
+	{
+		top.showCognates = 1;
+		top.refreshRightFrame();
+	}
+	top.cognateFrameHighlights = Array();
+	for(var i in top.soundchange_cognate_dep[id])
+	{
+		top.cognateFrameHighlights.push(1*i);
+	}
+	top.drawCognateSetTable();
+	scrollToHighlightedCognate()
+}
+
+function removeSoundChange(id)
+{
+	if( confirm("Are you certain you want to remove this sound change? This action cannot be undone.") )
+	{
+		if( top.app.removeSoundChange(id) || true)
+		{
+			top.drawReconstructionTable();
+			top.drawCognateSetTable();
+		}
+	}
+}
+
+</script>
+</head>
+<body onload="top.drawReconstructionTable(); showPanel(top.showReconstructionPanel);">
+<div id="frameheader">
+<div class="tiny hide">
+<script type="text/javascript">if(!top.showCorrespondences) { document.write('<a href="javascript:" onclick="top.showCorrespondences=1; top.refreshRightFrame();"><img src="up.png" alt="up"/>Show Correspondences</a> | '); } </script>
+<a href="javascript:" onclick="top.showReconstructions=0; top.refreshRightFrame();">hide</a>
+</div>
+<h1>Reconstructions</h1>
+</div>
+<div id="body">
+
+<!--
+<table class="panelbuttons"><tr>
+<td class="first" id="panelbutton0"><a href="#" onclick="showPanel(0)">Reconstructions</a></td>
+<td id="panelbutton1"><a href="#" onclick="showPanel(1)">Sound Changes</a></td>
+<td id="panelbutton2"><a href="#" onclick="showPanel(2)">Add a reconstructed language</a></td>
+</tr></table>
+-->
+<div class="panelbuttoncontainer">
+<a href="#" class="panelbuttons first" id="panelbutton0" onclick="showPanel(0)">Reconstructions</a>
+<a href="#" class="panelbuttons" id="panelbutton1" onclick="showPanel(1)">Sound Changes</a>
+<a href="#" class="panelbuttons" id="panelbutton2" onclick="showPanel(2)">Add a reconstructed language</a>
+</div>
+
+<div id="panel0" class="panel">
+	<div id="dataTable"></div>
+	<p><a href="#" onclick="top.sortReconstructions('indexorder'); top.drawReconstructionTable();">clear sort</a></p>
+	<p><a href="#" onclick="top.reconstructionFrameHighlights=[]; top.drawReconstructionTable();">clear all highlights</a></p>
+	<p><a href="javascript:" onclick="top.initializeReconstructionHiddenRows(); top.drawReconstructionTable();">collapse all open rows</a></p>
+</div>
+<!--
+<form action="reconstructions.php" method="post">
+	<input type="submit" value="Refresh Page" name="submit_button"/>
+	<input type="button" value="Redraw Table" name="redraw_button" onclick="top.drawReconstructionTable()"/>
+	<input type="button" value="Clear Highlights" name="clear_button" onclick="top.reconstructionFrameHighlights=[]; top.drawReconstructionTable();"/>
+</form>
+-->
+
+<div id="panel1" class="panel" style="display: none;">
+	<div id="soundChangeTable"></div>
+<!--
+	<h4>Add a new sound change</h4>
+	<form action="reconstructions.php" method="post">
+		<table class="data_table">
+		<tr>
+			<td><select id="fld_reconstruction" onchange="top.updateRuleSelect('fld_follows','fld_reconstruction','fld_inlanguage',-1,-1)"></select></td>
+			<td>becomes</td>
+			<td><input type="text" id="fld_becomes" value="" class="singlesegmentinput"/></td>
+			<td>/</td>
+			<td><input type="text" id="fld_before" value="" class="singlesegmentinput"/></td>
+			<td>___</td>
+			<td><input type="text" id="fld_after" value="" class="singlesegmentinput"/></td>
+			<td>in</td>
+			<td><select id="fld_inlanguage" onchange="top.updateRuleSelect('fld_follows','fld_reconstruction','fld_inlanguage',-1,-1)"></select></td>
+			<td>Applies after</td>
+			<td><select id="fld_follows" value="0"></select></td>
+			<td><input type="button" value="Add Sound Change" onclick="addSoundChange();"/></td>
+		</tr>
+		</table>
+	</form>
+-->
+	<p><a href="javascript:" onclick="top.initializeReconstructionHiddenRows(); top.drawReconstructionTable();">collapse all open rows</a></p>
+</div>
+
+<div id="panel2" class="panel" style="display: none;">
+	<b>Add a reconstructed language to the database</b>
+	<form action="reconstructions.php" method="post">
+	<table class="data_table">
+	<tr>
+	<td>Full Name</td>
+	<td><input type="text" id="fullname" value=""/></td>
+	</tr>
+	<tr>
+	<td>Abbreviated Name</td>
+	<td><input type="text" id="abbr" value=""/></td>
+	</tr>
+	</table>
+	<input type="button" value="Add Language" name="submit_button" onclick="top.app.addReconstructedLanguage(document.getElementById('fullname').value,document.getElementById('abbr').value); top.defaultDisplaySettings(); top.refreshRightFrame();"/>
+	</form>
+	<p><em>Note: adding a language to the project will erase your current display settings (but will not affect any of your data).</em></p>
+	</div>
+</div>
+
+</body>
+</html>

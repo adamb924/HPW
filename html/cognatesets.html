@@ -1,0 +1,238 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<link rel="stylesheet" type="text/css" href="style.css" />
+<link rel="stylesheet" type="text/css" href="narrow.css" />
+<script type="text/javascript">
+function saveNote(row)
+{
+	top.app.saveCognateNote(document.getElementById("notetext"+row).value,row);
+}
+
+function copyFromFirst(row)
+{
+	if(document.getElementById("c"+row+',1') == null || document.getElementById("c"+row+',1').value == "") { return; }
+	else
+	{
+		for(i=2;i<=top.languages.length;i++)
+		{
+			if(document.getElementById("c"+row+','+i) != null)
+			{
+				document.getElementById("c"+row+','+i).value = document.getElementById("c"+row+',1').value;
+			}
+		}
+	}
+}
+
+function clearCorrespondenceForm(row)
+{
+	for(i=1;i<=top.languages.length;i++)
+	{
+		if(document.getElementById("c"+row+','+i) != null)
+		{
+			document.getElementById("c"+row+','+i).value = "";
+		}
+	}
+}
+function saveProto(row)
+{
+	lgs = Array();
+	forms = Array();
+
+	ct = 0;
+	for(i=0; i<top.languages.length; i++)
+	{
+		if(top.languages[i].reconstructed==1)
+		{
+			if(document.getElementById("protoinput"+row+","+top.languages[i].id) != null)
+			{
+				lgs[ct] = top.languages[i].id;
+				forms[ct] = document.getElementById("protoinput"+row+","+top.languages[i].id).value;
+				ct++;
+			}
+		}
+	}
+	if(lgs.length>0)
+	{
+		if(top.app.reconstructProtoform(row,forms,lgs) || true)
+			top.drawCognateSetTable();
+	}
+}
+
+toggleReconstructionForm = function toggleReconstructionForm(row)
+{
+	if(top.cognateProtoOpen[row]==0 || top.cognateProtoOpen[row]==null)
+	{
+		top.cognateProtoOpen[row] = 1;
+		document.getElementById("proto"+row).style.display = 'table-row';
+		document.getElementById("rlink"+row).innerHTML = top.strShowReconAfter;
+	}
+	else
+	{
+		top.cognateProtoOpen[row] = 0;
+		document.getElementById("proto"+row).style.display = 'none';
+		document.getElementById("rlink"+row).innerHTML = top.strShowReconBefore;
+	}
+}
+
+function removeCognate(row)
+{
+	if( confirm("Are you certain you want to remove this cognate set? This action cannot be undone.") )
+	{
+		top.invalidateCognateSort=1;
+		if(top.app.removeCognateSet(row) || true)
+			top.drawCognateSetTable();
+	}
+}
+
+function highlightData(row)
+{
+	top.cognateFrameSelectedRow = row;
+	top.drawCognateSetTable();
+	top.highlightData(row);
+}
+
+function changeCognateSet(row)
+{
+	top.cognateFrameSelectedRow = row;
+	language_ids = Array();
+	sel = Array();
+
+
+	ct = 0;
+	for(var i in top.selections) // in effect, through language ids
+	{
+		for(var j in top.selections[i])
+		{
+			sel[ct] = top.selections[i][j];
+			language_ids[ct] = i;
+			ct++;
+		}
+	}
+	if(top.app.alterCognateSet(row,sel,language_ids)||true)
+		top.drawCognateSetTable();
+}
+
+function rowselect(row)
+{
+	if(top.cognateFrameSelectedRow == row)
+	{
+		top.cognateFrameSelectedRow = null;
+	}
+	else
+	{
+		top.cognateFrameSelectedRow = row;
+	}
+	top.drawCognateSetTable();
+}
+
+function toggleNoteForm(row)
+{
+	if(top.cognateNoteOpen[row]==0||top.cognateNoteOpen[row]==null)
+	{
+		top.cognateNoteOpen[row] = 1;
+		document.getElementById("note"+row).style.display = 'table-row';
+		document.getElementById("nlink"+row).innerHTML = top.strShowNoteAfter;
+	}
+	else
+	{
+		top.cognateNoteOpen[row] = 0;
+		document.getElementById("note"+row).style.display = 'none';
+		document.getElementById("nlink"+row).innerHTML = top.strShowNoteBefore;
+	}
+}
+
+function toggleCorrespondenceForm(row)
+{
+	if(top.cognateCorrOpen[row]==null || top.cognateCorrOpen[row]==0)
+	{
+		top.cognateCorrOpen[row] = 1;
+		document.getElementById("corr"+row).style.display = 'table-row';
+		document.getElementById("excorr"+row).style.display = 'table-row';
+		document.getElementById("link"+row).innerHTML = top.strShowCorrAfter;
+	}
+	else
+	{
+		top.cognateCorrOpen[row] = 0;
+		document.getElementById("corr"+row).style.display = 'none';
+		document.getElementById("excorr"+row).style.display = 'none';
+		document.getElementById("link"+row).innerHTML = top.strShowCorrBefore;
+	}
+}
+
+function createCorrespondence(row)
+{
+	correspondences = Array(top.languages.length);
+	for(i=1;i<=top.languages.length;i++)
+	{
+		if(document.getElementById("c"+row+','+i) != null)
+		{
+			correspondences[i-1] = document.getElementById("c"+row+','+i).value;
+		}
+		else
+		{
+			correspondences[i-1] = '-1';
+		}
+	}
+	language_ids = Array();
+	for(i=0; i<top.languages.length; i++)
+	{
+		language_ids[i] = top.languages[i].id;
+	}
+	top.createCorrespondenceSet(correspondences,language_ids,row);
+}
+
+function newAssociation(row)
+{
+	if(!top.showCorrespondences)
+	{
+		alert('The correspondence window is not showing.');
+	}
+	else if(top.correspondenceFrameSelectedRow==null)
+	{
+		alert('No correspondence set seems to be selected.');
+	}
+	else
+	{
+		top.cognateFrameHighlightedSource=null;
+		if(top.app.associateCognateCorrespondence(row,top.correspondenceFrameSelectedRow)||true)
+		{
+			top.drawCognateSetTable();
+			top.drawCorrespondenceTable();
+		}
+	}
+}
+</script>
+
+</head>
+<body onload="top.drawCognateSetTable();">
+<div id="frameheader">
+
+<div class="tiny hide">
+<script type="text/javascript">if(!top.showData) { document.write('<a href="javascript:" onclick="top.showData=1; top.refreshRightFrame();"><img src="up.png" alt="up"/>Show Data</a> | '); } </script>
+<script type="text/javascript">if(!top.showCorrespondences) { document.write('<a href="javascript:" onclick="top.showCorrespondences=1; top.refreshRightFrame();"><img src="down.png" alt="down"/>Show Correspondences</a> | '); } </script>
+<a href="javascript:" onclick="top.showCognates=0; top.refreshRightFrame();">hide</a>
+</div>
+
+<h1>Cognate Sets</h1>
+</div>
+<div id="body">
+<!--
+<form action="cognatesets.php" method="post">
+	<input type="submit" value="Refresh Page" name="submit_button"/>
+	<input type="button" value="Redraw Table" name="redraw_button" onclick="top.drawCognateSetTable()"/>
+	<input type="button" value="Clear Highlights" name="clear_button" onclick="top.cognateFrameHighlights=Array();top.drawCognateSetTable();"/>
+</form>
+-->
+<div id="dataTable"></div>
+
+<p><a href="#" onclick="top.sortCognateSets('indexorder'); top.drawCognateSetTable();">clear sort</a></p>
+<p><a href="#" onclick="top.cognateFrameHighlights=Array();top.drawCognateSetTable();">clear all highlights</a></p>
+<p><a href="javascript:" onclick="top.initializeCognateHiddenRows(); top.drawCognateSetTable();">collapse all open rows</a></p>
+
+</div>
+</body>
+</html>

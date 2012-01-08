@@ -1,0 +1,170 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<link rel="stylesheet" type="text/css" href="style.css" />
+<style type="text/css">
+body {
+	font-size: 10pt;
+	font-family: Tahoma;
+}
+input,select {
+	font-size: 10pt;
+	font-family: Tahoma;
+	width: 75px;
+}
+input.regwidth {
+	width: auto;
+}
+</style>
+<script type="text/javascript">
+function removeLanguage(id)
+{
+	if( confirm("Are you certain you want to remove this language and all associated data? This action cannot be undone.") )
+	{
+		top.app.removeLanguage(id);
+		location.reload(true);
+	}
+}
+
+function makeChanges()
+{
+	for(i in top.languages)
+	{
+		ind = top.languages[i].id;
+
+		fn = document.getElementById("fullname+"+ind).value;
+		ab = document.getElementById("abbr+"+ind).value;
+		iso = document.getElementById("iso+"+ind).value;
+		p = document.getElementById("parent+"+ind).value;
+		ph = 1 * document.getElementById("philological+"+ind).checked;
+		phs = document.getElementById("philological_source+"+ind).value;
+		col = document.getElementById("color+"+ind).value;
+
+		top.app.modifyLanguage(ind,fn,ab,iso,p,ph,phs,col);
+	}
+	top.app.refreshLanguages();
+	location.reload(true);
+}
+</script>
+</head>
+<body>
+
+<form action="languages.html" method="post">
+<div id="language_table"><p><em>There are no languages currently in the database.</em></p></div>
+</form>
+<script type="text/javascript">
+if(top.languages.length>0)
+{
+	htmlstr = "";
+	htmlstr += "<table border=\"1\">\n";
+
+	// full name
+	htmlstr += "<tr><th>Full Name</th>\n";
+	for(i in top.languages)
+	{
+		htmlstr += '<td><input type="text" id="fullname+' +top.languages[i].id+ '" value="' +top.languages[i].fullname+ '"/></td>';
+	}
+	htmlstr += "</tr>\n";
+
+	// abbreviated name
+	htmlstr += "<tr><th>Abbreviated Name</th>\n";
+	for(i in top.languages)
+	{
+		htmlstr += '<td><input type="text" id="abbr+' +top.languages[i].id+ '" value="' +top.languages[i].abbr+ '"/></td>';
+	}
+	htmlstr += "</tr>\n";
+
+	// iso code
+	htmlstr += "<tr><th>ISO 639-3</th>\n";
+	for(i in top.languages)
+	{
+		htmlstr += '<td><input type="text" id="iso+' + top.languages[i].id + '" value="' +top.languages[i].iso+ '"/></td>';
+	}
+	htmlstr += "</tr>\n";
+
+	// parent language
+	htmlstr += "<tr><th>Parent</th>\n";
+	for(i in top.languages)
+	{
+		htmlstr += '<td><select id="parent+'+top.languages[i].id+'">';
+		htmlstr += '<option value="">-None-</option>';
+		for(j in top.languages)
+		{
+			if(top.languages[j].id == top.languages[i].parent)
+			{
+				htmlstr += '<option selected value="'+top.languages[j].id+'">'+top.languages[j].fullname+'</option>';
+			}
+			else
+			{
+				htmlstr += '<option value="'+top.languages[j].id+'">'+top.languages[j].fullname+'</option>';
+			}
+		}
+		htmlstr += '</select></td>';
+	}
+	htmlstr += "</tr>\n";
+
+	// Philological
+	htmlstr += "<tr><th>Derived from philological source</th>\n";
+	for(i in top.languages)
+	{
+		if(top.languages[i].philological) { htmlstr +=  '<td><input type="checkbox" id="philological+'+top.languages[i].id+'" checked="checked"/></td>'; }
+		else { htmlstr +=  '<td><input type="checkbox" id="philological+'+top.languages[i].id+'"/></td>'; }
+	}
+	htmlstr += "</tr>\n";
+
+	// philological source language
+	htmlstr += "<tr><th>Philological Source</th>\n";
+	for(i in top.languages)
+	{
+		htmlstr += '<td><select id="philological_source+'+top.languages[i].id+'">';
+		htmlstr += '<option value="">-None-</option>';
+		for(j in top.languages)
+		{
+			if(top.languages[j].id == top.languages[i].philological_source)
+			{
+				htmlstr += '<option selected value="'+top.languages[j].id+'">'+top.languages[j].fullname+'</option>';
+			}
+			else
+			{
+				htmlstr += '<option value="'+top.languages[j].id+'">'+top.languages[j].fullname+'</option>';
+			}
+		}
+		htmlstr += '</select></td>';
+	}
+	htmlstr += "</tr>\n";
+	
+	// color
+	htmlstr += "<tr><th>Color</th>\n";
+	for(i in top.languages)
+	{
+		htmlstr += '<td><input type="text" id="color+' + top.languages[i].id + '" value="' +top.languages[i].color+ '"/></td>';
+	}
+	htmlstr += "</tr>\n";
+
+	// remove button
+	htmlstr += "<tr><th></th>\n";
+	for(i in top.languages)
+	{
+		htmlstr += '<td><a href="#" onclick="removeLanguage('+ top.languages[j].id +')">remove</a></td>';
+	}
+	htmlstr += "</tr>\n";
+
+
+	htmlstr += "</table>\n";
+	htmlstr += '<input type="button" value="Make Changes" style="width: 100px;" name="submit_button" onclick="makeChanges();"/></form>';
+	document.getElementById("language_table").innerHTML = htmlstr;
+
+
+}
+</script>
+<!--
+<h2>Descent Diagram</h2>
+<?php
+tableWithParents('null');
+?>
+-->
+</body>
+</html>

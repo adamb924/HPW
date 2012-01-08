@@ -1,0 +1,199 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<link rel="stylesheet" type="text/css" href="style.css" />
+<script type="text/javascript">
+function populateVisibility()
+{
+	htmlstr = "";
+	for(i=0; i<top.col_visible.length; i++)
+	{
+		if(top.col_visible[top.col_order[i]])
+		{
+			htmlstr += '<input type="checkbox" id="v'+top.col_order[i]+'" checked="checked" onchange="updateVisibility()"\/><label for="v'+top.col_order[i]+'">'+top.languages[top.col_order[i]].fullname+'<\/label><br\/>';
+		}
+		else
+		{
+			htmlstr += '<input type="checkbox" id="v'+top.col_order[i]+'" onchange="updateVisibility()"\/><label for="v'+top.col_order[i]+'">'+top.languages[top.col_order[i]].fullname+'<\/label><br\/>';
+		}
+	}
+	document.getElementById("visibility_list").innerHTML = htmlstr;
+}
+
+
+function populateOrder()
+{
+	orderBox = document.getElementById("language_order");
+	while (orderBox.childNodes.length > 0)
+	{
+        orderBox.removeChild(orderBox.firstChild);
+	}
+
+	for(i=0; i<top.col_order.length; i++)
+	{
+		opt = document.createElement("option");
+		opt.id = "v" + top.col_order[i];
+		opt.innerHTML = top.languages[top.col_order[i]].fullname;
+		orderBox.appendChild(opt)
+	}
+	orderBox.size = top.languages.length;
+}
+
+function moveUp()
+{
+	ind = document.getElementById("language_order").selectedIndex;
+
+	if(ind>0)
+	{
+		tmp = top.col_order[ind-1];
+		top.col_order[ind-1] = top.col_order[ind];
+		top.col_order[ind] = tmp;
+		populateOrder();
+		populateVisibility();
+		document.getElementById("language_order").selectedIndex = ind-1;
+	}
+}
+
+function moveDown()
+{
+	ind = document.getElementById("language_order").selectedIndex;
+
+	if(ind>-1 && ind<(top.col_order.length-1))
+	{
+		tmp = top.col_order[ind+1];
+		top.col_order[ind+1] = top.col_order[ind];
+		top.col_order[ind] = tmp;
+		populateOrder();
+		populateVisibility();
+		document.getElementById("language_order").selectedIndex = ind+1;
+	}
+}
+
+function updateFrames()
+{
+	if(document.getElementById("showDataFrame").checked) { top.showData = 1; } else { top.showData = 0; }
+	if(document.getElementById("showCognateFrame").checked) { top.showCognates = 1; } else { top.showCognates = 0; }
+	if(document.getElementById("showCorrespondenceFrame").checked) { top.showCorrespondences = 1; } else { top.showCorrespondences = 0; }
+	if(document.getElementById("showReconstructionFrame").checked) { top.showReconstructions = 1; } else { top.showReconstructions = 0; }
+}
+
+updateVisibility = function updateVisibility()
+{
+	for(i=0; i<top.col_visible.length; i++)
+	{
+		if(document.getElementById("v"+i).checked)
+		{
+			top.col_visible[i] = 1;
+		}
+		else
+		{
+			top.col_visible[i] = 0;
+		}
+	}
+}
+
+function checkAll()
+{
+	for(i=0; i<top.col_visible.length; i++)
+	{
+		document.getElementById("v"+i).checked = true;
+	}
+}
+
+function uncheckAll()
+{
+	for(i=0; i<top.col_visible.length; i++)
+	{
+		document.getElementById("v"+i).checked = false;
+	}
+}
+
+function updateAbbr()
+{
+	if(document.getElementById("useabbr").checked)
+	{
+		top.useAbbreviations = 1;
+	}
+	else
+	{
+		top.useAbbreviations = 0;
+	}
+}
+</script>
+
+</head>
+<body onload="populateOrder();populateVisibility();">
+<h1>Workplace Display Settings</h1>
+
+<h2>Select which windows are visible</h2>
+<form action="get">
+<script type="text/javascript">
+if(top.showData==1)
+{
+	document.write('<input type="checkbox" id="showDataFrame" checked="checked" onclick="updateFrames()"/><label for="showDataFrame">Show Data Frame</label><br/>');
+}
+else
+{
+	document.write('<input type="checkbox" id="showDataFrame" onclick="updateFrames()"/><label for="showDataFrame">Show Data Frame</label><br/>');
+}
+if(top.showCognates==1)
+{
+	document.write('<input type="checkbox" id="showCognateFrame" checked="checked" onclick="updateFrames()"/><label for="showCognateFrame">Show Cognate Frame</label><br/>');
+}
+else
+{
+	document.write('<input type="checkbox" id="showCognateFrame" onclick="updateFrames()"/><label for="showCognateFrame">Show Cognate Frame</label><br/>');
+}
+if(top.showCorrespondences==1)
+{
+	document.write('<input type="checkbox" id="showCorrespondenceFrame" checked="checked" onclick="updateFrames()"/><label for="showCorrespondenceFrame">Show Correspondence Frame</label><br/>');
+}
+else
+{
+	document.write('<input type="checkbox" id="showCorrespondenceFrame" onclick="updateFrames()"/><label for="showCorrespondenceFrame">Show Correspondence Frame</label><br/>');
+}
+if(top.showReconstructions==1)
+{
+	document.write('<input type="checkbox" id="showReconstructionFrame" checked="checked" onclick="updateFrames()"/><label for="showReconstructionFrame">Show Reconstruction Frame</label>');
+}
+else
+{
+	document.write('<input type="checkbox" id="showReconstructionFrame" onclick="updateFrames()"/><label for="showReconstructionFrame">Show Reconstruction Frame</label>');
+}
+
+// document.write('<p>&nbsp;</p>');
+document.write('<h2>Display abbreviations rather than full language names</h2>');
+
+
+if(top.useAbbreviations==1)
+{
+	document.write('<p><input type="checkbox" id="useabbr" checked="checked" onclick="updateAbbr()"/><label for="useabbr">Display abbreviations instead of full names</label></p>');
+}
+else
+{
+	document.write('<p><input type="checkbox" id="useabbr" onclick="updateAbbr()"/><label for="useabbr">Display abbreviations instead of full names</label></p>');
+}
+
+</script>
+</form>
+
+<h2>Visibility of languages</h2>
+<form method="get" action="#">
+	<div id="visibility_list">
+	</div>
+</form>
+<p><a href="javascript:" onclick="checkAll();">Check All</a><br/><a href="javascript:" onclick="uncheckAll();">Uncheck All</a></p>
+
+<h2>Order of languages</h2>
+<form method="get" action="#">
+	<select name="language_order" id="language_order"></select><br/>
+	<input type="button" value="Move Up" onclick="moveUp();"/><br/>
+	<input type="button" value="Move Down" onclick="moveDown();"/>
+</form>
+
+
+</body>
+</html>

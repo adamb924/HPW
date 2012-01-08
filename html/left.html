@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<link rel="stylesheet" type="text/css" href="style.css" />
+<style type="text/css">
+body {
+	background-color:lightblue;
+	font-size: 10pt;
+	font-family: Tahoma;
+}
+h1 {
+	font-size: 11pt;
+	margin-bottom: 0.25em;
+}
+h2 {
+	font-size: 10pt;
+	color: #555;
+	margin: 0px;
+}
+</style>
+<script type="text/javascript">
+//top.app.ReceiveMessage();
+//top.app.saveCognateNote("Hello World",1);
+//top.app.addProject("Hello World","hello");
+</script>
+</head>
+<body onload="top.changeHeader();">
+<div id="header">
+</div>
+
+
+<ul class="toc">
+<li><a href="#" onclick="top.mode='intro'; top.refreshRightFrame();">Introduction</a></li>
+<li>
+	<a href="#" onclick="top.mode='workspace'; top.refreshRightFrame();" class="highlight">Workspace</a>
+	<ul>
+		<li><a href="#" onclick="top.mode='projectapproach'; top.refreshRightFrame();">Change project/ approach</a></li>
+		<li><a href="#" onclick="top.mode='visibility'; top.refreshRightFrame();">Display settings</a></li>
+		<li><a href="#" onclick="top.mode='languages'; top.refreshRightFrame();">Languages</a></li>
+		<li><a href="#" onclick="top.mode='import'; top.refreshRightFrame();">Import CSV Data</a></li>
+		<li><a href="#" onclick="top.mode='export'; top.refreshRightFrame();">Export XML Data</a></li>
+	</ul>
+</li>
+<li>Manage...
+	<ul>
+		<li><a href="#" onclick="top.mode='projects'; top.refreshRightFrame();">Projects</a></li>
+		<li><a href="#" onclick="top.mode='approaches'; top.refreshRightFrame();">Approaches</a></li>
+	</ul></li>
+<li><a href="#" onclick="top.mode='version'; top.refreshRightFrame();">Version History</a></li>
+</ul>
+</body>
+</html>

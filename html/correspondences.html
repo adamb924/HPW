@@ -1,0 +1,240 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<link rel="stylesheet" type="text/css" href="style.css" />
+<link rel="stylesheet" type="text/css" href="narrow.css" />
+<script type="text/javascript">
+function addSoundChange(row)
+{
+//	if( top.app.createSoundChange(document.getElementById("fld_reconstruction").value,document.getElementById("fld_becomes").value,document.getElementById("fld_before").value,document.getElementById("fld_after").value,document.getElementById("fld_inlanguage").value,document.getElementById("fld_follows").value) || true)
+	if( top.app.createSoundChange(document.getElementById("chedit_reconstruction"+row).value,document.getElementById("chedit_becomes"+row).value,document.getElementById("chedit_before"+row).value,document.getElementById("chedit_after"+row).value,document.getElementById("chedit_inlanguage"+row).value,document.getElementById("chedit_follows"+row).value,row) || true)
+	{
+		top.drawReconstructionTable();
+	}
+}
+
+function toggleChangeForm(row)
+{
+	if(top.correspondenceChangeOpen[row]==0||top.correspondenceChangeOpen[row]==null)
+	{
+		top.correspondenceChangeOpen[row] = 1;
+		document.getElementById("cheditrow"+row).style.display = 'table-row';
+		document.getElementById("chlink"+row).innerHTML = top.strChangeAfter;
+	}
+	else
+	{
+		top.correspondenceChangeOpen[row] = 0;
+		document.getElementById("cheditrow"+row).style.display = 'none';
+		document.getElementById("chlink"+row).innerHTML = top.strChangeBefore;
+	}
+}
+
+function toggleNoteForm(row)
+{
+	if(top.correspondenceNoteOpen[row]==0||top.correspondenceNoteOpen[row]==null)
+	{
+		top.correspondenceNoteOpen[row] = 1;
+		document.getElementById("note"+row).style.display = 'table-row';
+		document.getElementById("nlink"+row).innerHTML = top.strShowNoteAfter;
+	}
+	else
+	{
+		top.correspondenceNoteOpen[row] = 0;
+		document.getElementById("note"+row).style.display = 'none';
+		document.getElementById("nlink"+row).innerHTML = top.strShowNoteBefore;
+	}
+}
+
+function saveNote(row)
+{
+	top.app.saveCorrespondenceNote(document.getElementById("notetext"+row).value,row);
+}
+
+
+function removeCorrespondence(row)
+{
+	if( confirm("Are you certain you want to remove this correspondence? This action cannot be undone.") )
+	{
+		if( top.app.removeCorrespondenceSet(row) || true )
+		{
+			top.invalidateCorrespondenceSort=1;
+			top.drawCorrespondenceTable();
+			top.drawReconstructionTable();
+		}
+	}
+}
+
+function highlightCognatesFrom(row)
+{
+	top.correspondenceFrameSelectedRow = row;
+	top.drawCorrespondenceTable();
+	top.highlightCognatesFrom(row);
+}
+
+function toggleEditForm(row)
+{
+	if(top.correspondenceEditOpen[row]==0||top.correspondenceEditOpen[row]==null)
+	{
+		top.correspondenceEditOpen[row] = 1;
+		document.getElementById("editrow"+row).style.display = 'table-row';
+		document.getElementById("edit"+row).innerHTML = top.strEditAfter;
+	}
+	else
+	{
+		top.correspondenceEditOpen[row] = 0;
+		document.getElementById("editrow"+row).style.display = 'none';
+		document.getElementById("edit"+row).innerHTML = top.strEditBefore;
+	}
+}
+
+function editCorrespondence(row)
+{
+
+	lgs = "";
+	cs = "";
+	for(i=0; i<top.languages.length; i++)
+	{
+		if( document.getElementById("c"+row+","+top.languages[i].id) != null )
+		{
+			lgs += top.languages[i].id + ",";
+			v = document.getElementById("c"+row+","+top.languages[i].id).value; if(v.length==0) { v = "-1"; }
+			cs += v + ",";
+		}
+	}
+	lgs = lgs.substring(0,lgs.lastIndexOf(','));
+	cs = cs.substring(0,cs.lastIndexOf(','));
+
+	if( top.app.alterCorrespondenceSet(row,cs,lgs) || true )
+	{
+		top.drawCorrespondenceTable();
+	}
+}
+
+function toggleCorrespondenceForm(row)
+{
+	if(top.correspondenceReconOpen[row]==0||top.correspondenceReconOpen[row]==null)
+	{
+		top.correspondenceReconOpen[row] = 1;
+		document.getElementById("corr"+row).style.display = 'table-row';
+		document.getElementById("excorr"+row).style.display = 'table-row';
+		document.getElementById("link"+row).innerHTML = top.strReconAfter;
+	}
+	else
+	{
+		top.correspondenceReconOpen[row] = 0;
+		document.getElementById("corr"+row).style.display = 'none';
+		document.getElementById("excorr"+row).style.display = 'none';
+		document.getElementById("link"+row).innerHTML = top.strReconBefore;
+	}
+}
+
+function reconstruct(row)
+{
+	if(!top.showReconstructions)
+	{
+		top.showReconstructions = 1;
+		top.refreshRightFrame();
+	}
+
+	if(document.getElementById("recon"+row).value.length>0)
+	{
+		if(top.app.addReconstruction(document.getElementById("recon"+row).value,document.getElementById("proto"+row).value,row)||true)
+		{
+			top.invalidateReconstructionSort = 1;
+			top.drawCorrespondenceTable();
+			top.drawReconstructionTable();
+		}
+	}
+
+}
+
+function rowselect(row)
+{
+	if(top.correspondenceFrameSelectedRow == row)
+	{
+		top.correspondenceFrameSelectedRow = null;
+	}
+	else
+	{
+		top.correspondenceFrameSelectedRow = row;
+	}
+	top.drawCorrespondenceTable();
+}
+
+function newAssociation(row)
+{
+	top.correspondenceFrameSelectedRow = row;
+	if(!top.showReconstructions)
+	{
+		alert('The reconstruction window is not showing.');
+	}
+	else if(top.reconstructionFrameSelectedRow==null)
+	{
+		alert('No reconstruction set seems to be selected.');
+	}
+	else
+	{
+		if( top.app.associateCorrespondenceReconstruction(row,top.reconstructionFrameSelectedRow) || true )
+		{
+			top.drawCorrespondenceTable();
+			top.drawReconstructionTable();
+		}
+	}
+}
+
+function removeSelected(row)
+{
+	top.correspondenceFrameSelectedRow = row;
+	if(!top.showCognates)
+	{
+		alert('The cognate window is not showing.');
+		return;
+	}
+	else if(top.cognateFrameSelectedRow==null)
+	{
+		alert('No cognate set seems to be selected.');
+		return;
+	}
+	if( top.app.disassociateCognateCorrespondence(top.cognateFrameSelectedRow,row) || true )
+	{
+//	alert('eh');
+		top.drawCognateSetTable();
+		top.drawCorrespondenceTable();
+		top.drawReconstructionTable();
+	}
+}
+
+</script>
+
+</head>
+<body onload="top.drawCorrespondenceTable();">
+<div id="frameheader">
+
+<div class="tiny hide">
+<script type="text/javascript">if(!top.showCognates) { document.write('<a href="javascript:" onclick="top.showCognates=1; top.refreshRightFrame();"><img src="up.png" alt="up"/>Show Cognates</a> | '); } </script>
+<script type="text/javascript">if(!top.showReconstructions) { document.write('<a href="javascript:" onclick="top.showReconstructions=1; top.refreshRightFrame();"><img src="down.png" alt="down"/>Show Reconstructions</a> | '); } </script>
+<a href="javascript:" onclick="top.showCorrespondences=0; top.refreshRightFrame();">hide</a>
+</div>
+<h1>Correspondences</h1>
+</div>
+<div id="body">
+
+<div id="dataTable"></div>
+
+<p><a href="javascript:" onclick="top.sortCorrespondenceSets('indexorder'); top.drawCorrespondenceTable();">clear sort</a></p>
+<p><a href="javascript:" onclick="top.correspondenceFrameHighlights=[]; top.drawCorrespondenceTable();">clear all highlights</a></p>
+<p><a href="javascript:" onclick="top.initializeCorrespondenceHiddenRows(); top.drawCorrespondenceTable();">collapse all open rows</a></p>
+
+<!--
+<form action="correspondences.php" method="post">
+	<input type="submit" value="Refresh Page" name="submit_button"/>
+	<input type="button" value="Redraw Table" name="redraw_button" onclick="top.drawCorrespondenceTable()"/>
+	<input type="button" value="Clear Highlights" name="clear_button" onclick="top.correspondenceFrameHighlights=[]; top.drawCorrespondenceTable();"/>
+</form>
+-->
+</div>
+</body>
+</html>

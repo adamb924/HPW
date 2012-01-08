@@ -1,0 +1,111 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title></title>
+<link rel="stylesheet" type="text/css" href="style.css" />
+<script type="text/javascript">
+function exportthefile()
+{
+	top.app.exportXML(1*document.getElementById('strings').checked,1*document.getElementById('indices').checked,1*document.getElementById('data').checked,1*document.getElementById('cognates').checked,1*document.getElementById('correspondences').checked,1*document.getElementById('reconstructions').checked);
+}
+
+function updateWhat(level,checked)
+{
+	if(checked)
+	{
+		switch(level)
+		{
+		case 1:
+			document.getElementById('data').checked = true;
+			document.getElementById('cognates').checked = false;
+			document.getElementById('correspondences').checked = false;
+			document.getElementById('reconstructions').checked = false;
+			break;
+		case 2:
+			document.getElementById('data').checked = true;
+			document.getElementById('cognates').checked = true;
+			document.getElementById('correspondences').checked = false;
+			document.getElementById('reconstructions').checked = false;
+			break;
+		case 3:
+			document.getElementById('data').checked = true;
+			document.getElementById('cognates').checked = true;
+			document.getElementById('correspondences').checked = true;
+			document.getElementById('reconstructions').checked = false;
+			break;
+		case 4:
+			document.getElementById('data').checked = true;
+			document.getElementById('cognates').checked = true;
+			document.getElementById('correspondences').checked = true;
+			document.getElementById('reconstructions').checked = true;
+			break;
+		}
+	}
+	else
+	{
+		switch(level)
+		{
+		case 1:
+			document.getElementById('data').checked = false;
+			document.getElementById('cognates').checked = false;
+			document.getElementById('correspondences').checked = false;
+			document.getElementById('reconstructions').checked = false;
+			break;
+		case 2:
+			document.getElementById('data').checked = true;
+			document.getElementById('cognates').checked = false;
+			document.getElementById('correspondences').checked = false;
+			document.getElementById('reconstructions').checked = false;
+			break;
+		case 3:
+			document.getElementById('data').checked = true;
+			document.getElementById('cognates').checked = true;
+			document.getElementById('correspondences').checked = false;
+			document.getElementById('reconstructions').checked = false;
+			break;
+		case 4:
+			document.getElementById('data').checked = true;
+			document.getElementById('cognates').checked = true;
+			document.getElementById('correspondences').checked = true;
+			document.getElementById('reconstructions').checked = false;
+			break;
+		}
+	}
+}
+
+</script>
+</head>
+<body>
+<h1>Export XML data</h1>
+<p>Note that data will be from the current project and approach.</p>
+<form action="export.html" method="get">
+
+<p>
+You can choose what to export. Exporting strings provides a more readable output&mdash;for instance by providing a list of forms and language names, instead of just indices that point you to those forms and language names. Here is a guide:</p>
+<ul>
+<li>Strings only. Easier to read; harder to repurpose the data. If you only export strings, not all of the interrelations between the levels of analysis are exported.</li>
+<li>Indices only. Easier for a computer to read; harder for a human to read. This is the most efficient option for carrying out subsequent processing.</li>
+<li>Strings and indices. Easy for a computer and a human to read. Less efficient for subsequent processing.</li>
+</ul>
+<p>
+<input type="checkbox" id="strings"/><label for="strings">Export strings</label><br/>
+<input type="checkbox" id="indices" checked="checked"/><label for="indices">Export indices</label><br/>
+</select>
+</p>
+
+<p>
+<input type="checkbox" id="data" checked="checked" onclick="updateWhat(1,this.checked);"/><label for="data">Export data</label><br/>
+<input type="checkbox" id="cognates" checked="checked" onclick="updateWhat(2,this.checked);"/><label for="cognates">Export cognate sets</label><br/>
+<input type="checkbox" id="correspondences" checked="checked" onclick="updateWhat(3,this.checked);"/><label for="correspondences">Export correspondence sets</label><br/>
+<input type="checkbox" id="reconstructions" checked="checked" onclick="updateWhat(4,this.checked);"/><label for="reconstructions">Export reconstructions</label><br/>
+</p>
+
+<p>After clicking on the &ldquo;Export&rdquo; button you will be prompted for a filename.</p>
+
+<input type="button" value="Export" onclick="exportthefile();"/>
+</form>
+
+
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<link rel="stylesheet" type="text/css" href="style.css" />
+<link rel="stylesheet" type="text/css" href="narrow.css" />
+<script type="text/javascript" id="custom_css"></script>
+<script type="text/javascript">
+var nr = top.items.length;
+var nc = top.languages.length;
+
+function saveEdit(row)
+{
+	for(i=0; i<top.languages.length; i++)
+	{
+		if(document.getElementById("editinput"+row+","+top.languages[i].id)!=null)
+		{
+			if( top.app.modifyData(document.getElementById("editinput"+row+","+top.languages[i].id).value,row,top.languages[i].id) || true )
+			{
+				continue;
+			}
+		}
+	}
+	top.app.RefreshFromDatabase();
+	top.drawDataTable();
+}
+
+function toggleDataEdit(row)
+{
+	if(top.dataEditOpen[row]==0||top.dataEditOpen[row]==null)
+	{
+		top.dataEditOpen[row] = 1;
+		document.getElementById("edit"+row).style.display = 'table-row';
+		document.getElementById("elink"+row).innerHTML = top.strShowEditAfter;
+	}
+	else
+	{
+		top.dataEditOpen[row] = 0;
+		document.getElementById("edit"+row).style.display = 'none';
+		document.getElementById("elink"+row).innerHTML = top.strShowEditBefore;
+	}
+}
+
+function clearSelections()
+{
+	top.dataFrameHighlightedSource = null;
+	top.selections = Array();
+	for(i=0; i<top.languages.length; i++)
+	{
+		top.selections[top.languages[i].id] = Array();
+	}
+	top.drawDataTable();
+}
+
+function cellSelect(id)
+{
+	top.dataFrameHighlightedSource = null;
+
+	row = 1*id.substring(0,id.indexOf(','));
+	col = 1*id.substring(id.indexOf(',')+1,id.length);
+
+	if(top.items[row][col] != null)
+	{
+		if(top.selections[col].indexOf(row)==-1)
+		{
+			top.selections[col].push(row);
+		}
+		else
+		{
+			delete top.selections[col][top.selections[col].indexOf(row)];
+		}
+		top.drawDataTable();
+	}
+}
+
+function deselect(col)
+{
+	top.dataFrameHighlightedSource = null;
+	top.selections[col] = Array();
+	top.drawDataTable();
+}
+
+function createCognateSet()
+{
+	sel = Array();
+	language_ids = Array();
+
+	ct = 0;
+	for(var i in top.selections) // in effect, through language ids
+	{
+		for(var j in top.selections[i])
+		{
+			sel[ct] = top.selections[i][j];
+			language_ids[ct] = i;
+			ct++;
+		}
+	}
+
+	if( top.app.createCognateSet(document.getElementById("cs_name").value,document.getElementById("cs_description").value,sel,language_ids) || true )
+	{
+		top.invalidateCognateSort=1;
+		top.drawCognateSetTable();
+	}
+}
+
+function quickCognateSet(row)
+{
+	sel = Array();
+	ids = Array();
+
+	ct = 0;
+	for(var i in top.languages) // in effect, cycling through language ids // except not...
+	{
+		if(top.languages[i].reconstructed==1 || top.items[row][top.languages[i].id]==null)
+		{
+			continue;
+		}
+		if(top.items[row][top.languages[i].id].length>0) { sel[ct] = row; } else { sel[ct] = -1; }
+		ids[ct] = top.languages[i].id;
+		ct++;
+	}
+	if(top.app.createCognateSet(top.lemmas[row],"",sel,ids) || true )
+	{
+		top.invalidateCognateSort=1;
+		top.drawCognateSetTable();
+	}
+}
+
+function cogsetsFromRows()
+{
+	if(top.app.createCognateSetsFromRows()||true)
+	{
+		top.drawCognateSetTable();
+	}
+}
+</script>
+
+</head>
+<body onload="top.drawDataTable();">
+<div id="frameheader">
+
+<div class="tiny hide">
+<script type="text/javascript">if(!top.showCognates) { document.write('<a href="javascript:" onclick="top.showCognates=1; top.refreshRightFrame();"><img src="down.png" alt="down"/>Show Cognates</a> | '); } </script>
+<a href="javascript:" onclick="top.showData=0; top.refreshRightFrame();">hide</a>
+</div>
+<h1>Data</h1>
+</div>
+<div id="body">
+<!--
+<form action="data.php" method="post">
+	<input type="submit" value="Refresh Page" name="submit_button"/>
+	<input type="button" value="Redraw Table" name="redraw_button" onclick="top.drawDataTable()"/>
+	<input type="button" value="Clear all selections" name="clear_selections_button" onclick="clearSelections()"/>
+</form>
+-->
+<div id="dataTable"></div>
+<p><a href="#" onclick="top.sortData('indexorder'); top.drawDataTable();">clear sort</a></p>
+<p><a href="#" onclick="clearSelections();">clear selections</a></p>
+<p><a href="javascript:" onclick="cogsetsFromRows();">make cognate sets from all data rows</a></p>
+<p><a href="javascript:" onclick="top.initializeDataHiddenRows(); top.drawDataTable();">collapse all open rows</a></p>
+
+
+<h2>Create a cognate set</h2>
+<form action="data.php" method="get">
+	Name: <input type="text" value="" name="cs_name" id="cs_name"/><br/>
+	Note: <input type="text" value="" name="cs_description" id="cs_description"/><br/>
+	<input type="button" value="Create" onclick="createCognateSet();"/>
+</form>
+
+</div>
+</body>
+</html>

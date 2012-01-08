@@ -1,0 +1,321 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<link rel="stylesheet" type="text/css" href="style.css" />
+<script type="text/javascript">
+function go()
+{
+	if(top.projects.length==0)
+	{
+		giveUp("There are currently no projects in the database. Add a project, and then an approach, to begin work. (From the left menu, 'Manage... Projects')");
+		return;
+	}
+	else
+	{
+		populateProjects();
+		if(top.approaches.length==0)
+		{
+			giveUp("There are currently no approaches in the database. Add an approach to begin work. (From the left menu, 'Manage... Approaches')");
+			return;
+		}
+		else
+		{
+			populateApproaches();
+		}
+	}
+
+}
+
+function populateProjects()
+{
+	projectBox = document.getElementById("copy_project");
+	while (projectBox.childNodes.length > 0)
+	{
+	        projectBox.removeChild(projectBox.firstChild);
+	}
+	ct = 0;
+	for(var i in top.projects)
+	{
+		opt = document.createElement("option");
+		opt.value = top.projects[i].id;
+		opt.innerHTML = top.projects[i].name;
+		projectBox.appendChild(opt);
+		if(top.project)
+		{
+			if(top.project==top.projects[i].id)
+			{
+				projectBox.selectedIndex = ct;
+			}
+		}
+		ct++;
+	}
+}
+function populateApproaches()
+{
+	projectID = document.getElementById("copy_project").value;
+	approachBox = document.getElementById("copy_approach");
+	while (approachBox.childNodes.length > 0)
+	{
+        approachBox.removeChild(approachBox.firstChild);
+	}
+	ct = 0;
+	for(var i in top.approaches)
+	{
+		if(top.approaches[i].project == projectID)
+		{
+			opt = document.createElement("option");
+			opt.value = top.approaches[i].id;
+			opt.innerHTML = top.approaches[i].name;
+			approachBox.appendChild(opt);
+
+			if(top.approach)
+			{
+				if(top.approach==top.approaches[i].id)
+				{
+					approachBox.selectedIndex = ct;
+				}
+			}
+			ct++;
+		}
+	}
+}
+
+function giveUp(msg)
+{
+	document.getElementById("projappr").innerHTML = "<p><em>"+msg+"</em></p>";
+}
+
+</script>
+</head>
+<body onload="go();">
+
+<h1>Existing approaches</h1>
+<div id="approach_table"><p><em>No approaches are currently in the database.</em></p></div>
+<script type="text/javascript">
+function remove(id)
+{
+	if(top.app.removeApproach(id) || true)
+	{
+		location.reload(true);
+	}
+}
+
+function add()
+{
+	if(top.app.addApproach(document.getElementById('name').value,document.getElementById('description').value,document.getElementById('project').value) || true)
+	{
+		location.reload(true);
+	}
+}
+
+function addApproachFromExisting()
+{
+	if(top.app.addApproachFromExisting(document.getElementById('copy_name').value,document.getElementById('copy_description').value,document.getElementById('copy_project').value,document.getElementById('copy_approach').value) || true)
+	{
+		location.reload(true);
+	}
+}
+
+if(top.approaches.length>0)
+{
+	htmlstr = "";
+	htmlstr += "<table border=\"1\">\n";
+	htmlstr += "<tr><th>Name</th><th>Description</th><th>Project</th></tr>\n";
+	for(i in top.approaches)
+	{
+		htmlstr += "<tr><td>"+top.approaches[i].name+"</td><td>"+top.approaches[i].description+"</td>";
+		for(j in top.projects)
+		{
+			if(top.projects[j].id==top.approaches[i].project)
+			{
+				htmlstr += "<td>"+top.projects[j].name+"</td>";
+				break;
+			}
+		}
+		htmlstr += "<td><a href=\"#\" onclick=\"remove("+top.approaches[i].id+");\">remove</a></td>";
+		htmlstr += "</tr>\n";
+	}
+	htmlstr += "</table>\n";
+	document.getElementById("approach_table").innerHTML = htmlstr;
+}
+</script>
+
+
+<!--
+<?php
+/*
+// add if added
+if(isset($_POST['mode']))
+{
+	elseif($_POST['mode']=='fromexisting')
+	{
+		echo '<pre>';
+		print_r($_POST);
+		echo '</pre>';
+
+		$query = "insert into approaches (name,description,project) values ('".prep($_POST['name'])."','".prep($_POST['description'])."','".$_POST['copy_project']."');";
+		$result = mysql_query($query) or print('Invalid query: ' . mysql_error() . '('.$query.')');
+		if(!$result) { return false; }
+		$query="select last_insert_id();"; $result = mysql_query($query) or print('Invalid query: ' . mysql_error().'<br/>');
+		$newapproachid = mysql_result($result,0);
+
+		// create temporary tables
+		$query="create table tmp_cog ( old int, new int );"; mysql_query($query) or print('Invalid query: ' . mysql_error().'<br/>');
+		$query="create table tmp_corr ( old int, new int );"; mysql_query($query) or print('Invalid query: ' . mysql_error().'<br/>');
+		$query="create table tmp_recon ( old int, new int );"; mysql_query($query) or print('Invalid query: ' . mysql_error().'<br/>');
+		$query="create table tmp_lang ( old int, new int );"; mysql_query($query) or print('Invalid query: ' . mysql_error().'<br/>');
+
+
+		// copy cognate sets
+		$query="select id,name,note from cognate_sets where approach='".$_POST['copy_approach']."';"; $result = mysql_query($query) or print('Invalid query: ' . mysql_error().'<br/>');
+		if($result && mysql_num_rows($result)>0)
+		{
+			while($row = mysql_fetch_assoc($result))
+			{
+				$query="insert into cognate_sets (name,note,approach) values ('".prep($row['name'])."','".prep($row['note'])."','".$newapproachid."');"; mysql_query($query) or print('Invalid query: ' . mysql_error().'<br/>');
+
+				$query="select last_insert_id();"; $result2 = mysql_query($query) or print('Invalid query: ' . mysql_error().'<br/>');
+				$cogid = mysql_result($result2,0);
+
+				$query="insert into tmp_cog (old,new) values (".$row['id'].",".$cogid.");"; mysql_query($query) or print('Invalid query: ' . mysql_error().'<br/>');
+
+				$query="insert into cognate_set_elements (setid,itemid) select ".$cogid.",itemid from cognate_set_elements where setid='".$row['id']."';"; mysql_query($query) or print('Invalid query: ' . mysql_error().'<br/>');
+			}
+		}
+
+		// copy correspondences
+		$query="select id,note from correspondence_sets where approach='".$_POST['copy_approach']."';"; $result = mysql_query($query) or print('Invalid query: ' . mysql_error().'<br/>');
+		if($result && mysql_num_rows($result)>0)
+		{
+			while($row = mysql_fetch_assoc($result))
+			{
+				$query="insert into correspondence_sets (approach,note) values ('".$newapproachid."','".$row['note']."');"; mysql_query($query) or print('Invalid query: ' . mysql_error().'<br/>');
+
+				$query="select last_insert_id();"; $result2 = mysql_query($query) or print('Invalid query: ' . mysql_error().'<br/>');
+				$setid = mysql_result($result2,0);
+
+				$query="insert into tmp_corr (old,new) values (".$row['id'].",".$setid.");"; mysql_query($query) or print('Invalid query: ' . mysql_error().'<br/>');
+
+				$query="insert into correspondence_set_elements (setid,string,langid) select ".$setid.",string,langid from correspondence_set_elements where setid='".$row['id']."';"; mysql_query($query) or print('Invalid query: ' . mysql_error().'<br/>');
+			}
+		}
+
+		// copy reconstructions
+		$query="select * from reconstructions where approach='".$_POST['copy_approach']."';"; $result = mysql_query($query) or print('Invalid query: ' . mysql_error().'<br/>');
+		if($result && mysql_num_rows($result)>0)
+		{
+			while($row = mysql_fetch_assoc($result))
+			{
+				$query="insert into reconstructions (string,langid,note,approach) values ('".$row['string']."','".$row['langid']."','".$row['note']."','".$newapproachid."');"; mysql_query($query) or print('Invalid query: ' . mysql_error().'<br/>');
+
+				$query="select last_insert_id();"; $result2 = mysql_query($query) or print('Invalid query: ' . mysql_error().'<br/>');
+				$reconid = mysql_result($result2,0);
+
+				$query="insert into tmp_recon (old,new) values (".$row['id'].",".$reconid.");"; mysql_query($query) or print('Invalid query: ' . mysql_error().'<br/>');
+			}
+		}
+
+		// copy proto-languages
+		$query="select id,fullname,abbr,iso,reconstructed,project,approach from languages where approach='".$_POST['copy_approach']."';"; $result = mysql_query($query) or print('Invalid query: ' . mysql_error().'<br/>');
+		print $query . '<hr/>';
+		if($result && mysql_num_rows($result)>0)
+		{
+			while($row = mysql_fetch_assoc($result))
+			{
+				$query="insert into languages (fullname,abbr,iso,reconstructed,project,approach) values ('".$row['fullname']."','".$row['abbr']."','".$row['iso']."','".$row['reconstructed']."','".$row['project']."','".$row['approach']."');"; mysql_query($query) or print('Invalid query: ' . mysql_error().'<br/>');
+
+				$query="select last_insert_id();"; $result2 = mysql_query($query) or print('Invalid query: ' . mysql_error().'<br/>');
+				$langid = mysql_result($result2,0);
+
+				$query="insert into tmp_lang (old,new) values (".$row['id'].",".$langid.");"; mysql_query($query) or print('Invalid query: ' . mysql_error().'<br/>');
+			}
+		}
+
+
+		// copy protoforms
+		$query="select protoforms.id,form,setid,langid from protoforms,languages where languages.approach='".$_POST['copy_approach']."' and languages.id=protoforms.langid;"; $result = mysql_query($query) or print('Invalid query: ' . mysql_error().'<br/>');
+		if($result && mysql_num_rows($result)>0)
+		{
+			while($row = mysql_fetch_assoc($result))
+			{
+				$query = "insert into protoforms (form,setid,langid) select form,setid,tmp_lang.new as langid from protoforms,tmp_lang,languages where tmp_lang.old=protoforms.langid;"; mysql_query($query) or print('Invalid query: ' . mysql_error().'<br/>');
+			}
+		}
+
+		// cognate/correspondence table
+		$query="insert into cognate_correspondence (cognate,correspondence) select tmp_cog.new as cognate,tmp_corr.new as correspondence from cognate_correspondence,tmp_cog,tmp_corr where cognate_correspondence.cognate=tmp_cog.old and cognate_correspondence.correspondence=tmp_corr.old;"; mysql_query($query) or print('Invalid query: ' . mysql_error().'<br/>');
+
+		// correspondence/reconstruction table
+		$query="insert into correspondence_reconstruction (correspondence,reconstruction) select tmp_corr.new as correspondence,tmp_recon.new as reconstruction from correspondence_reconstruction,tmp_recon,tmp_corr where correspondence_reconstruction.reconstruction=tmp_recon.old and correspondence_reconstruction.correspondence=tmp_corr.old;"; mysql_query($query) or print('Invalid query: ' . mysql_error().'<br/>');
+
+		// remove temporary tables
+		$query="drop table tmp_cog;"; mysql_query($query) or print('Invalid query: ' . mysql_error().'<br/>');
+		$query="drop table tmp_corr;"; mysql_query($query) or print('Invalid query: ' . mysql_error().'<br/>');
+		$query="drop table tmp_recon;"; mysql_query($query) or print('Invalid query: ' . mysql_error().'<br/>');
+		$query="drop table tmp_lang;"; mysql_query($query) or print('Invalid query: ' . mysql_error().'<br/>');
+	}
+	echo '<script type="text/javascript">top.refreshFromDatabase();</script>'."\n";
+}
+*/
+?>
+-->
+<div id="add_approach">
+<hr/>
+<h2>Add an approach</h2>
+<form action="approaches.php" method="post">
+<input type="hidden" name="mode" value="new"/>
+<label for="name">Name</label> <input type="text" name="name" id="name" value=""/><br/>
+<label for="description">Description</label> <input type="text" name="description" id="description" value=""/><br/>
+<label for="project">Project</label> <select name="project" id="project"></select>
+<script type="text/javascript">
+projectBox = document.getElementById("project");
+ct=0;
+for(i in top.projects)
+{
+	opt = document.createElement("option");
+	opt.value = top.projects[i].id;
+	opt.innerHTML = top.projects[i].name;
+	projectBox.appendChild(opt);
+	if(top.project)
+	{
+		if(top.project==top.projects[i].id)
+		{
+			projectBox.selectedIndex = ct;
+		}
+	}
+	ct++;
+}
+</script>
+<br/>
+<input type="button" name="submit_button" value="Add Approach" onclick="add();"/>
+</form>
+</div>
+<script type="text/javascript">
+if(top.projects.length==0)
+{
+	document.getElementById('add_approach').innerHTML = "<p><em>You need to add a project to the database before you can add an approach.</em></p>";
+}
+</script>
+
+<hr/>
+<h2>Create new approach based on an existing approach</h2>
+<p>You can create an approach by copying all of the elements of an existing approach. (Descent relations will have to be added in manually.)</p>
+<div id="projappr">
+<form action="approaches.php" method="post">
+<input type="hidden" name="mode" value="fromexisting"/>
+<label for="copy_name">Name</label> <input type="text" name="copy_name" id="copy_name" value=""/><br/>
+<label for="copy_description">Description</label> <input type="text" name="copy_description" id="copy_description" value=""/><br/>
+<label for="copy_project">Project</label><select id="copy_project" name="copy_project" onchange="populateApproaches();"></select><br/>
+<label for="copy_approach">Source Approach</label><select id="copy_approach" name="copy_approach"></select><br/>
+<br/>
+<input type="button" name="submit_button" value="Add Approach" onclick="addApproachFromExisting();"/>
+
+</form>
+</div>
+
+
+</body>
+</html>

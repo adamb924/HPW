@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+<body>
+<h1>Existing projects</h1>
+<div id="message" class="message"></div>
+
+<div id="project_table"><p><em>No projects are currently in the database.</em></p></div>
+<script type="text/javascript">
+function add()
+{
+	if(top.app.addProject(document.getElementById('name').value,document.getElementById('description').value) || true)
+	{
+		location.reload(true);
+	}
+}
+
+function remove(id)
+{
+	if(top.app.removeProject(id) || true)
+	{
+		location.reload(true);
+	}
+}
+
+
+if(top.projects.length>0)
+{
+	htmlstr = "";
+	htmlstr += "<table border=\"1\">\n";
+	htmlstr += "<tr><th>Name</th><th>Description</th></tr>\n";
+	for(i in top.projects)
+	{
+		htmlstr += "<tr><td>"+top.projects[i].name+"</td><td>"+top.projects[i].description+"</td>";
+		htmlstr += "<td><a href=\"#\" onclick=\"remove("+top.projects[i].id+");\">remove</a></td>";
+		htmlstr += "</tr>\n";
+	}
+	htmlstr += "</table>\n";
+	document.getElementById("project_table").innerHTML = htmlstr;
+}
+
+</script>
+
+
+<hr/>
+<h2>Add a project</h2>
+<form action="projects.php" method="post">
+<label for="name">Name</label> <input type="text" name="name" id="name" value=""/><br/>
+<label for="description">Description</label> <input type="text" name="description" id="description" value=""/><br/>
+<input type="button" name="submit_button" value="Add Project" onclick="add();"/>
+</form>
+
+</body>
+</html>

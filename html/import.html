@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title></title>
+<link rel="stylesheet" type="text/css" href="style.css" />
+<script type="text/javascript">
+function upload()
+{
+	top.app.receiveFile(document.getElementById('file').value);
+	top.invalidateDataSort = 1;
+	top.defaultDisplaySettings();
+	alert('If no error messages appeared, you may assume the file was uploaded correctly. Go to the Workspace to look at the data.');
+}
+</script>
+</head>
+<body>
+<h1>Import CSV data</h1>
+<p>Note that data will be imported into the current project.</p>
+<form enctype="multipart/form-data" action="receive_file.html" method="POST">
+Choose a file to upload: <input name="uploadedfile" type="file" id="file" /><br />
+<input type="button" value="Upload File" onclick="upload();"/>
+</form>
+
+
+</body>
+</html>

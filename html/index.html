@@ -1,0 +1,883 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Historical Phonology Workplace</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<!--
+context.js is only for debugging in Firefox, and should be removed from the final version
+<script type="text/javascript" src="context.js"></script>
+-->
+<script type="text/javascript" src="functions.js"></script>
+<script type="text/javascript">
+var col_order = Array();
+var col_visible = Array();
+var selections = Array();
+
+var mode = "intro";
+var showData;
+var showCognates;
+var showCorrespondences;
+var showReconstructions;
+var showReconstructionPanel;
+
+var useAbbreviations;
+
+var project;
+var approach;
+
+var dataFrame;
+var cognateFrame;
+var correspondenceFrame;
+var reconstructionFrame;
+
+var dataFrameSelectedRow = null;
+var cognateFrameSelectedRow = null;
+var correspondenceFrameSelectedRow = null;
+var reconstructionFrameSelectedRow = null;
+
+var cognateFrameHighlights = Array();
+var correspondenceFrameHighlights = Array();
+var reconstructionFrameHighlights = Array();
+
+var dataEditOpen = Array();
+
+var cognateCorrOpen = Array();
+var cognateProtoOpen = Array();
+var cognateNoteOpen = Array();
+
+var correspondenceEditOpen = Array();
+var correspondenceReconOpen = Array();
+var correspondenceChangeOpen = Array();
+var correspondenceNoteOpen = Array();
+
+var reconstructionEditOpen = Array();
+var reconstructionNoteOpen = Array();
+var soundchangeEditOpen = Array();
+var soundchangeNoteOpen = Array();
+
+var dataSort = null;
+var invalidateDataSort = 1;
+var cognateSort = null;
+var invalidateCognateSort = 1;
+var correspondenceSort = null;
+var invalidateCorrespondenceSort = 1;
+var reconstructionSort = null;
+var invalidateReconstructionSort = 1;
+
+var dataRowOrder = Array();
+var cognateSetRowOrder = Array();
+var correspondenceSetRowOrder = Array();
+var reconstructionRowOrder = Array();
+
+
+validateProjectApproach = function validateProjectApproach()
+{
+	var pvalid = 0;
+	for(var i in top.projects)
+	{
+		if(top.projects[i].id==project)
+		{
+			pvalid = 1;
+			break;
+		}
+	}
+	var avalid = 0;
+	for(var i in top.approaches)
+	{
+		if(top.approaches[i].id==approach)
+		{
+			avalid = 1;
+			break;
+		}
+	}
+	if(!pvalid) { top.project = null; }
+	if(!avalid) { top.approach = null; }
+}
+
+tryToRedrawAllTables = function tryToRedrawAllTables()
+{
+		if(showData==1)
+		{
+			top.drawDataTable();
+		}
+		if(showCognates==1)
+		{
+			top.drawCognateSetTable();
+		}
+		if(showCorrespondences==1)
+		{
+			top.drawCorrespondenceTable();
+		}
+		if(showReconstructions==1)
+		{
+			top.drawReconstructionTable();
+		}
+}
+
+initialize = function initialize()
+{
+	getCookieSettings();
+}
+
+initializeDataHiddenRows = function initializeDataHiddenRows()
+{
+	dataEditOpen = Array(top.items.length);
+	for(var i in top.items)
+	{
+		dataEditOpen[i] = 0;
+	}
+}
+
+initializeCognateHiddenRows = function initializeCognateHiddenRows()
+{
+	if(cognateCorrOpen!=null) { delete cognateCorrOpen; }
+	if(cognateProtoOpen!=null) { delete cognateProtoOpen; }
+	if(cognateNoteOpen!=null) { delete cognateNoteOpen; }
+	cognateCorrOpen = Array();
+	cognateProtoOpen = Array();
+	cognateNoteOpen = Array();
+	for(var i in top.cognate_sets)
+	{
+		cognateCorrOpen[i] = 0;
+		cognateProtoOpen[i] = 0;
+		cognateNoteOpen[i] = 0;
+	}
+}
+
+initializeCorrespondenceHiddenRows = function initializeCorrespondenceHiddenRows()
+{
+	correspondenceEditOpen = Array();
+	correspondenceReconOpen = Array();
+	correspondenceChangeOpen = Array();
+	correspondenceNoteOpen = Array();
+	for(var i in top.correspondences)
+	{
+		correspondenceEditOpen[i] = 0;
+		correspondenceReconOpen[i] = 0;
+		correspondenceChangeOpen[i] = 0;
+		correspondenceNoteOpen[i] = 0;
+	}
+}
+
+initializeReconstructionHiddenRows = function initializeReconstructionHiddenRows()
+{
+	reconstructionEditOpen = Array(top.reconstructions.length);
+	reconstructionNoteOpen = Array(top.reconstructions.length);
+	for(var i in top.reconstructions)
+	{
+		reconstructionEditOpen[i] = 0;
+		reconstructionNoteOpen[i] = 0;
+	}
+	soundchangeEditOpen = Array(top.soundchanges.length);
+	soundchangeNoteOpen = Array(top.soundchanges.length);
+	for(i in top.soundchanges)
+	{
+		soundchangeEditOpen[i] = 0;
+		soundchangeNoteOpen[i] = 0;
+	}
+}
+
+initializeOrderVisibility = function initializeOrderVisibility()
+{
+	top.col_order = Array();
+	top.col_visible = Array();
+	for(i=0; i<languages.length; i++)
+	{
+		top.col_order[i] = i;
+		top.col_visible[i] = 1;
+	}
+}
+
+defaultDisplaySettings = function defaultDisplaySettings()
+{
+	refreshFromDatabase();
+
+	initializeOrderVisibility();
+
+	initializeDataHiddenRows();
+	initializeCognateHiddenRows();
+	initializeCorrespondenceHiddenRows();
+	initializeReconstructionHiddenRows();
+//	alert("initializing");
+
+	top.selections = Array();
+	for(i=0;i<languages.length;i++) { top.selections[top.languages[i].id] = Array(); }
+
+	top.showData = 1;
+	top.showCognates = 1;
+	top.showCorrespondences = 1;
+	top.showReconstructions = 1;
+	top.showReconstructionPanel = 0;
+
+	top.useAbbreviations = 0;
+	
+	sortData(null);
+	sortCognateSets(null);
+	sortCorrespondenceSets(null);
+
+	setCookieSettings();
+}
+
+getCookieSettings = function getCookieSettings()
+{
+	c = top.app.getCookies();
+	cookies = c.split("; ");
+
+	if(cookies.length<3) // because the project & approach cookies will already have been set
+	{
+		defaultDisplaySettings();
+		return;
+	}
+	
+	for(i=0; i<cookies.length; i++)
+	{
+		tmp = cookies[i].split("=");
+		tmp_name = tmp[0];
+		tmp_cookie = tmp[1];
+
+		switch(tmp_name)
+		{
+		case 'histling_project':
+			top.project = tmp_cookie*1;
+			break;
+		case 'histling_approach':
+			top.approach = tmp_cookie*1;
+			break;
+		case 'histling_display_settings':
+			histling_display_settings = tmp_cookie.split(",");
+			break;
+		case 'histling_ids':
+			histling_ids = tmp_cookie.split(",");
+			break;
+		case 'histling_visibility':
+			histling_visibility = tmp_cookie.split(",");
+			break;
+		case 'histling_order':
+			histling_order = tmp_cookie.split(",");
+			break;
+		case 'histling_mode':
+			mode = tmp_cookie;
+			break;
+		case 'histling_abbr':
+			if(tmp_cookie==1 || tmp_cookie=='1')
+			{
+				useAbbreviations = 1;
+			}
+			else
+			{
+				useAbbreviations = 0;
+			}
+			break;
+		}
+	}
+
+	top.app.setProjectApproach(top.project,top.approach);
+	refreshFromDatabase();
+	validateProjectApproach();
+
+	if(histling_display_settings[0]==1) { top.showData = 1; } else { top.showData = 0; }
+	if(histling_display_settings[1]==1) { top.showCognates = 1; } else { top.showCognates = 0; }
+	if(histling_display_settings[2]==1) { top.showCorrespondences = 1; } else { top.showCorrespondences = 0; }
+	if(histling_display_settings[3]==1) { top.showReconstructions = 1; } else { top.showReconstructions = 0; }
+	top.showReconstructionPanel = 1*histling_display_settings[4];
+
+	// if there is garbage data anywhere
+	if(histling_ids.indexOf('undefined')!=-1 || histling_visibility.indexOf('undefined')!=-1 || histling_order.indexOf('undefined')!=-1 || histling_order.length != histling_ids.length || histling_visibility.length != histling_ids.length || histling_visibility.length != histling_order.length )
+	{
+		defaultDisplaySettings();
+		return;
+	}
+
+	// if the ids are not right
+	if(languages.length != histling_ids.length)
+	{
+		defaultDisplaySettings();
+		return;
+	}
+	for(i=0; i<languages.length; i++)
+	{
+		if(languages[i]==null || histling_ids[i]==null || languages[i].id!=histling_ids[i])
+		{
+			defaultDisplaySettings();
+			return;
+		}
+	}
+
+	// the ids must be appropriate
+	for(i=0; i<histling_order.length; i++)
+	{
+		top.col_order[i] = histling_order[i]*1;
+		top.col_visible[i] = histling_visibility[i]*1;
+	}
+
+	// this just needs to be done so that it has some values
+	top.selections = Array();
+	for(i=0;i<languages.length;i++) { top.selections[top.languages[i].id] = Array(); }
+	
+	changeHeader();
+	refreshRightFrame();
+
+}
+
+setCookieSettings = function setCookieSettings()
+{
+	if(top.useAbbreviations==1)
+	{
+		top.app.setCookie('histling_abbr','1');
+	}
+	else
+	{
+		top.app.setCookie('histling_abbr','0');
+	}
+
+	cookie = mode;
+	top.app.setCookie('histling_mode',cookie);
+
+	cookie = showData + ',' + showCognates + ',' + showCorrespondences + ',' + showReconstructions + ',' + showReconstructionPanel;
+	top.app.setCookie('histling_display_settings',cookie);
+
+	cookie='';
+	for(i=0;i<languages.length;i++)
+	{
+		cookie += languages[i].id + ',';
+	}
+	cookie = cookie.substring(0,cookie.length-1);
+	top.app.setCookie('histling_ids',cookie);
+
+	cookie='';
+	for(i=0;i<col_visible.length;i++)
+	{
+		cookie += top.col_visible[i] + ',';
+	}
+	cookie = cookie.substring(0,cookie.length-1);
+	top.app.setCookie('histling_visibility',cookie);
+
+	cookie='';
+	for(i=0;i<col_order.length;i++)
+	{
+		cookie += top.col_order[i] + ',';
+	}
+	cookie = cookie.substring(0,cookie.length-1);
+	top.app.setCookie('histling_order',cookie);
+}
+
+rightTo = function rightTo(fn)
+{
+	var rightFrame = document.createElement("frame");
+	rightFrameset.rows = "100";
+	rightFrame.id = "rightFrame";
+	rightFrame.name = "rightFrame";
+	rightFrame.src = fn;
+	rightFrameset.appendChild(rightFrame);
+}
+
+refresh = function refresh()
+{
+	refreshFromDatabase();
+	window.location.href=window.location.href;
+}
+
+refreshFromDatabase = function refreshFromDatabase()
+{
+	top.app.RefreshFromDatabase();
+	return true;
+}
+
+refreshRightFrame = function refreshRightFrame()
+{
+	rightFrameset = window.document.getElementById("rightFrameset");
+
+	while (rightFrameset.childNodes.length > 0)
+	{
+		rightFrameset.removeChild(rightFrameset.firstChild);
+	}
+
+
+	switch(mode)
+	{
+	case 'workspace':
+		if(top.project == null || top.approach == null)
+		{
+				rightTo("needtoassign.html");
+				break;
+		}
+
+		switch(showData + showCognates + showCorrespondences + showReconstructions)
+		{
+		case 0: // this can only be an error
+			top.showData = 1;
+			top.showCognates = 1;
+			top.showCorrespondences = 1;
+			top.showReconstructions = 1;
+			newrows = "25,25,25,25"; break;
+		case 1: newrows = "100"; break;
+		case 2: newrows = "50,50"; break;
+		case 3: newrows = "34,33,33"; break;
+		case 4: newrows = "25,25,25,25"; break;
+		}
+		if(rightFrameset.rows!=newrows) { rightFrameset.rows=newrows; }
+
+		if(showData==1)
+		{
+			dataFrame = document.createElement("frame");
+			dataFrame.id = "dataFrame";
+			dataFrame.name = "dataFrame";
+			dataFrame.src = "data.html";
+			rightFrameset.appendChild(dataFrame);
+		}
+		if(showCognates==1)
+		{
+			cognateFrame = document.createElement("frame");
+			cognateFrame.id = "cognateFrame";
+			cognateFrame.name = "cognateFrame";
+			cognateFrame.src = "cognatesets.html";
+			rightFrameset.appendChild(cognateFrame);
+		}
+		if(showCorrespondences==1)
+		{
+			correspondenceFrame = document.createElement("frame");
+			correspondenceFrame.id = "correspondenceFrame";
+			correspondenceFrame.name = "correspondenceFrame";
+			correspondenceFrame.src = "correspondences.html";
+			rightFrameset.appendChild(correspondenceFrame);
+		}
+		if(showReconstructions==1)
+		{
+			reconstructionFrame = document.createElement("frame");
+			reconstructionFrame.id = "reconstructionFrame";
+			reconstructionFrame.name = "reconstructionFrame";
+			reconstructionFrame.src = "reconstructions.html";
+			rightFrameset.appendChild(reconstructionFrame);
+		}
+		break;
+	case 'visibility':
+	case 'languages':
+	case 'lemmas':
+	case 'import':
+	case 'export':
+		if(top.project == null || top.approach == null)
+		{
+			rightTo("needtoassign.html");
+			break;
+		}
+		else
+		{
+			rightTo(mode+".html");
+		}
+		break;
+	default:
+		rightTo(mode+".html");
+		break;
+	}
+}
+
+createCorrespondenceSet = function createCorrespondenceSet(correspondences,languages,row)
+{
+	if(!showCorrespondences)
+	{
+		showCorrespondences = 1;
+		refreshRightFrame();
+	}
+	ct = 0;
+	for(i=0; i<correspondences.length; i++)
+	{
+		if(correspondences[i]=="")
+		{
+			correspondences[i] = "-";
+		}
+		else
+		{
+			if(correspondences[i]!=-1)
+			{
+				ct++;
+			}
+		}
+	}
+	if(ct==0) { alert('No segments have been entered.'); }
+	else {
+		if( top.app.createCorrespondenceSet(correspondences,languages,row) || true)
+		{
+			top.invalidateCorrespondenceSort=1;
+			top.drawCorrespondenceTable();
+			top.drawCognateSetTable();
+		}
+	}
+}
+
+associateCorrespondenceWithReconstruction = function associateCorrespondenceWithReconstruction(correspondence,reconstruction)
+{
+	if(!showCorrespondences)
+	{
+		showCorrespondences = 1;
+		refreshRightFrame();
+	}
+	top.app.associateCorrespondenceReconstruction(correspondence,reconstruction);
+}
+
+highlightCorrespondences = function highlightCorrespondences(row) // from a reconstruction
+{
+	if(!showCorrespondences)
+	{
+		showCorrespondences = 1;
+		refreshRightFrame();
+	}
+
+	top.reconstructionFrameSelectedRow = row;
+	top.drawReconstructionTable();
+
+	correspondenceFrameHighlights = Array();
+	if(cor_recon_dep[row] != null)
+	{
+		ct = 0;
+		for(i=0; i<cor_recon_dep[row].length; i++)
+		{
+			if(cor_recon_dep[row][i]!=null)
+			{
+				correspondenceFrameHighlights[ct] = i;
+				ct++;
+			}
+		}
+	}
+
+	top.drawCorrespondenceTable();
+	scrollToHighlightedCorrespondence();	
+}
+
+highlightCorrespondencesCognates = function highlightCorrespondencesCognates(row)
+{
+	// a little clunky so that it only refreshes once, if at all
+	if(!showCorrespondences)
+	{
+		showCorrespondences = 1;
+		if(!showCognates)
+		{
+			showCognates = 1;
+		}
+		refreshRightFrame();
+	}
+	else if(!showCognates)
+	{
+		showCognates = 1;
+		refreshRightFrame();
+	}
+
+	top.reconstructionFrameSelectedRow = row;
+	top.drawReconstructionTable();
+
+	correspondenceFrameHighlights = Array();
+	if(cor_recon_dep[row] != null)
+	{
+		ct = 0;
+		for(i=0; i<cor_recon_dep[row].length; i++)
+		{
+			if(cor_recon_dep[row][i]!=null)
+			{
+				correspondenceFrameHighlights[ct] = i;
+				ct++;
+			}
+		}
+	}
+
+	cognateFrameHighlights = Array();
+	ct=0;
+	for(j=0; j<correspondenceFrameHighlights.length; j++)
+	{
+		if(top.cog_corr_dep[correspondenceFrameHighlights[j]] != null)
+		{
+			for(i=0; i<top.cog_corr_dep[correspondenceFrameHighlights[j]].length; i++)
+			{
+				if(top.cog_corr_dep[correspondenceFrameHighlights[j]][i] != null)
+				{
+					cognateFrameHighlights[ct] = i;
+					ct++;
+				}
+			}
+		}
+	}
+	top.drawCorrespondenceTable();
+	top.drawCognateSetTable();
+	scrollToHighlightedCorrespondence();
+	scrollToHighlightedCognate()
+}
+
+
+highlightData = function highlightData(row)
+{
+	if(!showData)
+	{
+		showData = 1;
+		refreshRightFrame();
+	}
+	dataFrameHighlightedSource = row;
+	top.drawDataTable();
+	scrollToHighlightedData();
+}
+
+highlightCognatesFromCorrespondence = function highlightCognatesFromCorrespondence(row)
+{
+	if(!showCognates)
+	{
+		showCognates = 1;
+		refreshRightFrame();
+	}
+
+	top.correspondenceFrameSelectedRow = row;
+	top.drawCorrespondenceTable();
+
+	ct = 0;
+	cognateFrameHighlights = Array();
+	if(cog_corr_dep[row] != null)
+	{
+		for(i=0; i<cog_corr_dep[row].length; i++)
+		{
+			if(cog_corr_dep[row][i] != null)
+			{
+				cognateFrameHighlights[ct] = i;
+				ct++;
+			}
+		}
+	}
+
+	top.drawCognateSetTable();
+	scrollToHighlightedCognate();
+}
+
+function scrollToHighlightedData()
+{
+	var min=999999999999;
+	for(var j in top.selections)
+		for(var i in top.selections[j])
+		{
+			ind = top.dataRowOrder.indexOf(1*top.selections[j][i]);
+			if(ind != -1 && min > ind)
+			{
+				min = ind;
+			}
+		}
+	if(min!=999999999999)
+	{
+		if(dataFrame.contentDocument.getElementById("scroll"+top.dataRowOrder[min])!=null)
+		{
+			dataFrame.contentDocument.getElementById("scroll"+top.dataRowOrder[min]).scrollIntoView();
+		}
+	}
+}
+
+function scrollToHighlightedCognate()
+{
+	if(cognateFrameHighlights.length>0)
+	{
+		for(var i in top.cognateSetRowOrder) { if( cognateFrameHighlights.indexOf(1*top.cognateSetRowOrder[i]) != -1 ) { break;} }
+		if(cognateFrame.contentDocument.getElementById("scroll"+cognateSetRowOrder[i])!=null)
+		{
+			cognateFrame.contentDocument.getElementById("scroll"+cognateSetRowOrder[i]).scrollIntoView();
+		}
+	}
+}
+
+function scrollToHighlightedCorrespondence()
+{
+	if(correspondenceFrameHighlights.length>0)
+	{
+		for(var i in top.correspondenceSetRowOrder) { if( correspondenceFrameHighlights.indexOf(1*top.correspondenceSetRowOrder[i]) != -1 ) { break;} }
+		if(correspondenceFrame.contentDocument.getElementById("scroll"+correspondenceSetRowOrder[i])!=null)
+		{
+			correspondenceFrame.contentDocument.getElementById("scroll"+correspondenceSetRowOrder[i]).scrollIntoView();
+		}
+	}
+}
+
+function scrollToHighlightedReconstruction()
+{
+	if(reconstructionFrameHighlights.length>0)
+	{
+		for(var i in top.reconstructionRowOrder) { if( reconstructionFrameHighlights.indexOf(1*top.reconstructionRowOrder[i]) != -1 ) { break;} }
+		if(reconstructionFrame.contentDocument.getElementById("scroll"+reconstructionRowOrder[i]))
+		{
+			reconstructionFrame.contentDocument.getElementById("scroll"+reconstructionRowOrder[i]).scrollIntoView();
+		}
+	}
+}
+
+highlightReconstructionsFromCorrespondence = function highlightReconstructionsFromCorrespondence(row)
+{
+	if(!showReconstructions)
+	{
+		showReconstructions = 1;
+		refreshRightFrame();
+	}
+
+	top.correspondenceFrameSelectedRow = row;
+	top.drawCorrespondenceTable();
+
+	reconstructionFrameHighlights = Array();
+	ct=0;
+	for(j=0; j<cor_recon_dep.length; j++) // reconstruction
+	{
+		if(cor_recon_dep[j]!=null)
+		{
+			if(cor_recon_dep[j][row] != null)
+			{
+				reconstructionFrameHighlights[ct] = j;
+				ct++;
+			}
+		}
+	}
+
+	top.drawReconstructionTable();
+	scrollToHighlightedReconstruction();
+}
+
+removeCognateFromCorrespondence = function removeCognateFromCorrespondence(row)
+{
+	if(!showCorrespondences)
+	{
+		showCorrespondences = 1;
+		refreshRightFrame();
+	}
+	if( top.app.disassociateCognateCorrespondence(top.cognateFrameSelectedRow,row) || true)
+	{
+		cognateFrameHighlights = Array();
+		top.drawCognateSetTable();
+	}
+}
+
+changeHeader = function changeHeader()
+{
+	htmlStr = "";
+	if(top.projects.length == 0)
+	{
+			htmlStr += '<h1>No projects currently in database.<\/h1>';
+	}
+	else
+	{
+		if(top.project == null)
+		{
+				htmlStr += '<h1>No active project.<\/h1>';
+		}
+		else
+		{
+			for(i=0; i<top.projects.length; i++)
+			{
+				if(top.projects[i].id == top.project)
+				{
+					htmlStr += '<h1>'+top.projects[i].name+'<\/h1>';
+					break;
+				}
+			}
+			for(i=0; i<top.approaches.length; i++)
+			{
+				if(top.approaches[i].id == top.approach)
+				{
+					htmlStr += '<h2>'+top.approaches[i].name+'<\/h2>';
+					break;
+				}
+			}
+		}
+	}
+
+	if(window.document.getElementById("left").contentDocument.getElementById("header")!=null)
+	{
+		window.document.getElementById("left").contentDocument.getElementById("header").innerHTML = htmlStr;
+	}
+}
+
+highlightCorrespondencesFromCognates = function highlightCorrespondencesFromCognates(row)
+{
+	if(!showCorrespondences)
+	{
+		showCorrespondences = 1;
+		refreshRightFrame();
+	}
+
+	top.cognateFrameSelectedRow = row;
+	top.drawCognateSetTable();
+
+	ct = 0;
+	reconstructionFrameHighlights = Array();
+	correspondenceFrameHighlights = Array();
+	for(i=0; i<cog_corr_dep.length; i++)
+	{
+		if(cog_corr_dep[i]!=null && cog_corr_dep[i][row]!=null)
+		{
+			correspondenceFrameHighlights[ct] = i;
+			ct++;
+		}
+	}
+	
+	top.drawCorrespondenceTable();
+	scrollToHighlightedCorrespondence();
+}
+
+highlightCorrespondencesReconstructionsFromCognates = function highlightCorrespondencesReconstructionsFromCognates(row)
+{
+	if(!showReconstructions)
+	{
+		showReconstructions = 1;
+		refreshRightFrame();
+	}
+	if(!showCorrespondences)
+	{
+		showCorrespondences = 1;
+		refreshRightFrame();
+	}
+
+	top.cognateFrameSelectedRow = row;
+	top.drawCognateSetTable();
+
+	ct = 0;
+	correspondenceFrameHighlights = Array();
+	for(i=0; i<cog_corr_dep.length; i++)
+	{
+		if(cog_corr_dep[i]!=null && cog_corr_dep[i][row]!=null)
+		{
+			correspondenceFrameHighlights[ct] = i;
+			ct++;
+		}
+	}
+
+	reconstructionFrameHighlights = Array();
+	ct=0;
+	for(j=0; j<cor_recon_dep.length; j++) // reconstruction
+	{
+		if(cor_recon_dep[j]!=null)
+		{
+			for(i=0; i<correspondenceFrameHighlights.length; i++) // correspondence
+			{
+				if(cor_recon_dep[j][correspondenceFrameHighlights[i]] != null)
+				{
+					reconstructionFrameHighlights[ct] = j;
+					ct++;
+				}
+			}
+		}
+	}
+
+	top.drawCorrespondenceTable();
+	top.drawReconstructionTable();
+	scrollToHighlightedCorrespondence();
+	scrollToHighlightedReconstruction();
+}
+
+indexFromId = function indexFromId(id)
+{
+	for(var i in top.languages)
+	{
+		if(top.languages[i].id==id)
+		{
+			return i;
+		}
+	}
+	return false;
+}
+</script>
+
+</head>
+<frameset cols="120,*" id="master" border="0" onload="top.app.RefreshFromDatabase(); getCookieSettings(); changeHeader(); top.app.RefreshFromDatabase();">
+	<frame src="left.html" name="left" id="left"/>
+	<frameset id="rightFrameset" border="1" bordercolor="#000000">
+		<frame src="intro.html" name="intro" id="intro"/>
+	</frameset>
+</frameset>
+</html>
