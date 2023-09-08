@@ -14,9 +14,9 @@ Historical Phonology Workplace is software for doing historical phonological ana
 Documentation
 -------------
 
-The interface for Historical Phonology Workplace is web-like, so the intuitions you have from navigating around web sites should carry over. There is reasonably complete documentation in the program itself (left menu, under “Introduction”), which is also available [here](/hpw_intro).
+The interface for Historical Phonology Workplace is web-like, so the intuitions you have from navigating around web sites should carry over. There is reasonably complete documentation in the program itself (left menu, under “Introduction”).
 
-The initial configuration of Historical Phonology Workplace includes nonsense data and an analysis. If you accidentally delete that example and want it back, you can just copy this [database.db](applications/database.db) into the same directory of the executable. (Be careful not to overwrite your own analyses in so doing!) The nonsense data are also available: [mock.csv](applications/mock.csv).
+The initial configuration of Historical Phonology Workplace includes nonsense data and an analysis
 
 Downloads
 ---------
